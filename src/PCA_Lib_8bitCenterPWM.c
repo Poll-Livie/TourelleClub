@@ -47,7 +47,93 @@
 //-----------------------------------------------------------------------------
 #include "bsp.h"
 #include "InitDevice.h"
+
 #include "pca_0.h"
+#include "SPI0_Lib_Slave.h"
+#include "spi_0.h"
+#include <string.h>
+
+#include "direction.h"
+//-----------------------------------------------------------------------------
+// Prototypes
+//-----------------------------------------------------------------------------
+
+uint8_t TransferByte(uint8_t tx);
+
+//-----------------------------------------------------------------------------
+// Global Variables
+//-----------------------------------------------------------------------------
+
+SI_SEGMENT_VARIABLE(SPI_TxBuf[MAX_BUFFER_SIZE+1],
+                    uint8_t,
+                    EFM8PDL_SPI0_TX_SEGTYPE);
+SI_SEGMENT_VARIABLE(SPI_RxBuf[MAX_BUFFER_SIZE+1],
+                    uint8_t,
+                    EFM8PDL_SPI0_RX_SEGTYPE);
+
+uint8_t test_value_rx = 0;
+uint8_t test_array_rx[MAX_BUFFER_SIZE];
+
+//-----------------------------------------------------------------------------
+// Functions
+//-----------------------------------------------------------------------------
+
+// Receive a byte from the master
+uint8_t ReceiveCommand(void)
+{
+  // Send dummy byte and read command byte
+  return TransferByte(0xFF);
+}
+
+// Send and receive a byte
+uint8_t TransferByte(uint8_t tx)
+{
+  // Send tx byte
+  SPI0_writeByte(tx);
+
+  // Return rx byte
+  while (SPI0_isRxEmpty());
+  return SPI0_readByte();
+}
+
+// Send the response for the specified command (if necessary)
+void SendResponse(uint8_t command)
+{
+  uint8_t i;
+
+  switch (command)
+  {
+    case SPI_WRITE:
+      test_value_rx = TransferByte(0xFF);
+      break;
+
+    case SPI_READ:
+      TransferByte(test_value_rx);
+      break;
+
+    case SPI_WRITE_BUFFER:
+      for (i = 0; i < MAX_BUFFER_SIZE; i++)
+      {
+        test_array_rx[i] = TransferByte(0xFF);
+      }
+      break;
+
+    case SPI_READ_BUFFER:
+      for (i = 0; i < MAX_BUFFER_SIZE; i++)
+      {
+        TransferByte(test_array_rx[i]);
+      }
+      break;
+
+    case SLAVE_LED_ON:
+      BSP_LED0 = BSP_LED_ON;
+      break;
+
+    case SLAVE_LED_OFF:
+      BSP_LED0 = BSP_LED_OFF;
+      break;
+  }
+}
 
 //-----------------------------------------------------------------------------
 // SiLabs_Startup() Routine
@@ -67,18 +153,31 @@ void SiLabs_Startup (void)
 //-----------------------------------------------------------------------------
 void main(void)
 {
-  uint16_t delay_count;             // Used to implement a delay
+  // uint16_t delay_count;             // Used to implement a delay
   bool duty_direction0 = 0;          // Module 0: 0 = Decrease; 1 = Increase
   bool duty_direction1 = 0;          // Module 1: 0 = Increase; 1 = Decrease
 
   uint8_t duty_cycle0 = 0x80;
   uint8_t duty_cycle1 = 0xFF;
 
+  uint8_t command;
+
+
   enter_DefaultMode_from_RESET();
+  init_portsIn();
 
   while (1)
   {
-    // Wait
+      command = ReceiveCommand();
+
+      // Send the command response to the master
+      SendResponse(command);
+  }
+}
+
+
+/*
+ * // Wait
     for (delay_count = 30000; delay_count > 0; delay_count--);
 
     // Module 0
@@ -150,5 +249,4 @@ void main(void)
         PCA0_writeChannel(PCA0_CHAN1, duty_cycle1 << 8);
       }
     }
-  }
-}
+ */

@@ -1,4 +1,4 @@
-AX51 MACRO ASSEMBLER  SILABS_STARTUP                                                        11/10/22 21:19:04 PAGE     1
+AX51 MACRO ASSEMBLER  SILABS_STARTUP                                                        11/10/22 23:22:23 PAGE     1
 
 
 MACRO ASSEMBLER AX51 V3.15.3.0
@@ -6,11 +6,11 @@ OBJECT MODULE PLACED IN .\src\SILABS_STARTUP.OBJ
 ASSEMBLER INVOKED BY: Z:\Applications\Simplicity Studio.app\Contents\Eclipse\developer\toolchains\keil_8051\9.60\BIN\AX5
                       1.exe /Applications/Simplicity Studio.app/Contents/Eclipse/developer/sdks/8051/v4.2.4/Device/share
                       d/si8051Base/SILABS_STARTUP.A51 ERRORPRINT SET(SMALL,SILABS_STARTUP=1) DEBUG MACRO NOMOD51 INCDIR(
-                      /Applications/Simplicity Studio.app/Contents/Eclipse/developer/sdks/8051/v4.2.4//kits/common/bsp;/
-                      Applications/Simplicity Studio.app/Contents/Eclipse/developer/sdks/8051/v4.2.4//kits/EFM8BB1_LCK/c
-                      onfig;/Applications/Simplicity Studio.app/Contents/Eclipse/developer/sdks/8051/v4.2.4//Lib/efm8_as
-                      sert;/Applications/Simplicity Studio.app/Contents/Eclipse/developer/sdks/8051/v4.2.4//Device/EFM8B
-                      B1/peripheral_driver/inc;/Applications/Simplicity Studio.app/Contents/Eclipse/developer/sdks/8051/
+                      /Applications/Simplicity Studio.app/Contents/Eclipse/developer/sdks/8051/v4.2.4//Device/EFM8BB1/pe
+                      ripheral_driver/inc;/Applications/Simplicity Studio.app/Contents/Eclipse/developer/sdks/8051/v4.2.
+                      4//Lib/efm8_assert;/Applications/Simplicity Studio.app/Contents/Eclipse/developer/sdks/8051/v4.2.4
+                      //kits/common/bsp;/Applications/Simplicity Studio.app/Contents/Eclipse/developer/sdks/8051/v4.2.4/
+                      /kits/EFM8BB1_LCK/config;/Applications/Simplicity Studio.app/Contents/Eclipse/developer/sdks/8051/
                       v4.2.4//Device/shared/si8051Base;/Applications/Simplicity Studio.app/Contents/Eclipse/developer/sd
                       ks/8051/v4.2.4//Device/EFM8BB1/inc) PRINT(.\src\SILABS_STARTUP.lst) COND SYMBOLS PAGEWIDTH(120) PA
                       GELENGTH(65) OBJECT(.\src\SILABS_STARTUP.OBJ) 
@@ -62,7 +62,7 @@ LOC    OBJ             LINE     SOURCE
                          43     ;
                          44     ; <o> PDATALEN: PDATA memory size <0x0-0xFF> 
                          45     ;     <i> The length of PDATA memory in bytes.
-AX51 MACRO ASSEMBLER  SILABS_STARTUP                                                        11/10/22 21:19:04 PAGE     2
+AX51 MACRO ASSEMBLER  SILABS_STARTUP                                                        11/10/22 23:22:23 PAGE     2
 
  0000                    46     PDATALEN        EQU     0H
                          47     ;
@@ -127,7 +127,7 @@ LOC    OBJ             LINE     SOURCE
                         106     ; Standard SFR Symbols 
  00E0                   107     ACC     DATA    0E0H
  00F0                   108     B       DATA    0F0H
-AX51 MACRO ASSEMBLER  SILABS_STARTUP                                                        11/10/22 21:19:04 PAGE     3
+AX51 MACRO ASSEMBLER  SILABS_STARTUP                                                        11/10/22 23:22:23 PAGE     3
 
  0081                   109     SP      DATA    81H
  0082                   110     DPL     DATA    82H
@@ -192,7 +192,7 @@ LOC    OBJ             LINE     SOURCE
                                                 DJNZ    R7,PDATALOOP
                                 ENDIF
                         171     
-AX51 MACRO ASSEMBLER  SILABS_STARTUP                                                        11/10/22 21:19:04 PAGE     4
+AX51 MACRO ASSEMBLER  SILABS_STARTUP                                                        11/10/22 23:22:23 PAGE     4
 
                         172     IF IBPSTACK <> 0
                                 EXTRN DATA (?C_IBP)
@@ -227,7 +227,7 @@ LOC    OBJ             LINE     SOURCE
 00000C 020000     E     201                     LJMP    ?C_START
                         202     
                         203                     END
-AX51 MACRO ASSEMBLER  SILABS_STARTUP                                                        11/10/22 21:19:04 PAGE     5
+AX51 MACRO ASSEMBLER  SILABS_STARTUP                                                        11/10/22 23:22:23 PAGE     5
 
 SYMBOL TABLE LISTING
 ------ ----- -------
