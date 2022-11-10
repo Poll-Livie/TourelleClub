@@ -1,0 +1,196 @@
+C51 COMPILER V9.60.0.0   PCA_LIB_8BITCENTERPWM                                             11/10/2022 21:20:27 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE PCA_LIB_8BITCENTERPWM
+OBJECT MODULE PLACED IN .\src/PCA_Lib_8bitCenterPWM.OBJ
+COMPILER INVOKED BY: Z:\Applications\Simplicity Studio.app\Contents\Eclipse\developer\toolchains\keil_8051\9.60\BIN\C51.
+                    -exe /Users/paul_leveque/Documents/10_Projets/EFM8BB1_PCA_Lib_8bitCenterPWM/src/PCA_Lib_8bitCenterPWM.c OMF2 SMALL DEBUG 
+                    -OBJECTEXTEND ROM(LARGE) WARNINGLEVEL(2) FLOATFUZZY(3) OPTIMIZE(8,SPEED) DEFINE(DEBUG=1) INTVECTOR(0X0000) INTPROMOTE INC
+                    -DIR(/Users/paul_leveque/Documents/10_Projets/EFM8BB1_PCA_Lib_8bitCenterPWM/drivers;/Users/paul_leveque/Documents/10_Proj
+                    -ets/EFM8BB1_PCA_Lib_8bitCenterPWM/inc;/Users/paul_leveque/Documents/10_Projets/EFM8BB1_PCA_Lib_8bitCenterPWM/inc/config;
+                    -/Applications/Simplicity Studio.app/Contents/Eclipse/developer/sdks/8051/v4.2.4//kits/common/bsp;/Applications/Simplicit
+                    -y Studio.app/Contents/Eclipse/developer/sdks/8051/v4.2.4//kits/EFM8BB1_LCK/config;/Applications/Simplicity Studio.app/Co
+                    -ntents/Eclipse/developer/sdks/8051/v4.2.4//Lib/efm8_assert;/Applications/Simplicity Studio.app/Contents/Eclipse/develope
+                    -r/sdks/8051/v4.2.4//Device/EFM8BB1/peripheral_driver/inc;/Applications/Simplicity Studio.app/Contents/Eclipse/developer/
+                    -sdks/8051/v4.2.4//Device/shared/si8051Base;/Applications/Simplicity Studio.app/Contents/Eclipse/developer/sdks/8051/v4.2
+                    -.4//Device/EFM8BB1/inc) PRINT(.\src/PCA_Lib_8bitCenterPWM.lst) COND PAGEWIDTH(120) PAGELENGTH(65) OBJECT(.\src/PCA_Lib_8
+                    -bitCenterPWM.OBJ)
+
+line level    source
+
+   1          //-----------------------------------------------------------------------------
+   2          // PCA_Lib_8bitCenterPWM.c
+   3          //-----------------------------------------------------------------------------
+   4          // Copyright 2014 Silicon Laboratories, Inc.
+   5          // http://developer.silabs.com/legal/version/v11/Silicon_Labs_Software_License_Agreement.txt
+   6          //
+   7          // Program Description:
+   8          //
+   9          // This program sends two center-aligned PWM waveforms out of two I/O pins
+  10          // using the PCA's 8-bit Center-Aligned PWM Output Mode. The duty cycles of
+  11          // the waveforms are modified periodically within the main loop, and the
+  12          // waveforms are increasing/decreasing opposite of each other.
+  13          //
+  14          // In this example, PCA Modules 0 and 1 are used to generate the waveforms, and
+  15          // the crossbar is configured to send the CEX0 signal out on P1.4 and the CEX1
+  16          // signal out on P1.5.
+  17          //
+  18          // Resources:
+  19          //   SYSCLK - 24.5 MHz HFOSC / 1
+  20          //   PCA    - 8-bit PWM
+  21          //   P1.4   - PCA CEX0 / LED
+  22          //
+  23          //-----------------------------------------------------------------------------
+  24          // How To Test: EFM8BB1 LCK
+  25          //-----------------------------------------------------------------------------
+  26          // 1) Connect the EFM8BB1 LCK board to a PC using a micro USB cable.
+  27          // 2) Compile and download code to the EFM8BB1 LCK board.
+  28          //    In Simplicity Studio IDE, select Run -> Debug from the menu bar,
+  29          //    click the Debug button in the quick menu, or press F11.
+  30          // 3) Run the code.
+  31          //    In Simplicity Studio IDE, select Run -> Resume from the menu bar,
+  32          //    click the Resume button in the quick menu, or press F8.
+  33          // 4) Place an oscilloscope probe on P1.4 and P1.5.
+  34          // 5) Verify that the duty cycle of the waveforms vary smoothly between
+  35          //    minimum and maximum values.
+  36          //
+  37          // Target:         EFM8BB1
+  38          // Tool chain:     Generic
+  39          //
+  40          // Release 0.1 (ST)
+  41          //    - Initial Revision
+  42          //    - 10 OCT 2014
+  43          //
+  44          
+  45          //-----------------------------------------------------------------------------
+C51 COMPILER V9.60.0.0   PCA_LIB_8BITCENTERPWM                                             11/10/2022 21:20:27 PAGE 2   
+
+  46          // Includes
+  47          //-----------------------------------------------------------------------------
+  48          #include "bsp.h"
+  49          #include "InitDevice.h"
+  50          #include "pca_0.h"
+  51          
+  52          //-----------------------------------------------------------------------------
+  53          // SiLabs_Startup() Routine
+  54          // ----------------------------------------------------------------------------
+  55          // This function is called immediately after reset, before the initialization
+  56          // code is run in SILABS_STARTUP.A51 (which runs before main() ). This is a
+  57          // useful place to disable the watchdog timer, which is enable by default
+  58          // and may trigger before main() in some instances.
+  59          //-----------------------------------------------------------------------------
+  60          void SiLabs_Startup (void)
+  61          {
+  62   1        // Disable the watchdog here
+  63   1      }
+  64           
+  65          //-----------------------------------------------------------------------------
+  66          // Main Routine
+  67          //-----------------------------------------------------------------------------
+  68          void main(void)
+  69          {
+  70   1        uint16_t delay_count;             // Used to implement a delay
+  71   1        bool duty_direction0 = 0;          // Module 0: 0 = Decrease; 1 = Increase
+  72   1        bool duty_direction1 = 0;          // Module 1: 0 = Increase; 1 = Decrease
+  73   1      
+  74   1        uint8_t duty_cycle0 = 0x80;
+  75   1        uint8_t duty_cycle1 = 0xFF;
+  76   1      
+  77   1        enter_DefaultMode_from_RESET();
+  78   1      
+  79   1        while (1)
+  80   1        {
+  81   2          // Wait
+  82   2          for (delay_count = 30000; delay_count > 0; delay_count--);
+  83   2      
+  84   2          // Module 0
+  85   2          if (duty_direction0 == 1)               // Direction = Increase
+  86   2          {
+  87   3            // First, check the ECOM0 bit
+  88   3            if ((PCA0CPM0 & PCA0CPM0_ECOM__BMASK) == PCA0CPM0_ECOM__DISABLED)
+  89   3            {
+  90   4              PCA0CPM0 |= PCA0CPM0_ECOM__BMASK;   // Set ECOM0 if it is '0'
+  91   4            }
+  92   3            else                                  // Increase duty cycle otherwise
+  93   3            {
+  94   4              duty_cycle0--;                      // Increase duty cycle
+  95   4      
+  96   4              PCA0_writeChannel(PCA0_CHAN0, duty_cycle0 << 8);
+  97   4      
+  98   4              if (duty_cycle0 == 0x00)
+  99   4              {
+ 100   5                duty_direction0 = 0;              // Change direction for next time
+ 101   5              }
+ 102   4            }
+ 103   3          }
+ 104   2          else                                    // Direction = Decrease
+ 105   2          {
+ 106   3            if (duty_cycle0 == 0xFF)
+ 107   3            {
+ 108   4              PCA0CPM0 &= ~PCA0CPM0_ECOM__BMASK;  // Clear ECOM0
+C51 COMPILER V9.60.0.0   PCA_LIB_8BITCENTERPWM                                             11/10/2022 21:20:27 PAGE 3   
+
+ 109   4              duty_direction0 = 1;                // Change direction for next time
+ 110   4            }
+ 111   3            else
+ 112   3            {
+ 113   4              duty_cycle0++;                      // Decrease duty cycle
+ 114   4      
+ 115   4              PCA0_writeChannel(PCA0_CHAN0, duty_cycle0 << 8);
+ 116   4            }
+ 117   3          }
+ 118   2      
+ 119   2          // Module 1
+ 120   2          if (duty_direction1 == 1)               // Direction = Decrease
+ 121   2          {
+ 122   3            // First, check the ECOM1 bit
+ 123   3            if ((PCA0CPM1 & PCA0CPM1_ECOM__BMASK) == PCA0CPM1_ECOM__DISABLED)
+ 124   3            {
+ 125   4              PCA0CPM1 |= PCA0CPM1_ECOM__BMASK;   // Set ECOM1 if it is '0'
+ 126   4            }
+ 127   3            else                                  // Increase duty cycle otherwise
+ 128   3            {
+ 129   4              duty_cycle1++;                      // Decrease duty cycle
+ 130   4      
+ 131   4              PCA0_writeChannel(PCA0_CHAN1, duty_cycle1 << 8);
+ 132   4      
+ 133   4              if (duty_cycle1 == 0xFF)
+ 134   4              {
+ 135   5                duty_direction1 = 0;              // Change direction for next time
+ 136   5              }
+ 137   4            }
+ 138   3          }
+ 139   2          else                                    // Direction = Increase
+ 140   2          {
+ 141   3            if (duty_cycle1 == 0x00)
+ 142   3            {
+ 143   4              PCA0CPM1 &= ~PCA0CPM1_ECOM__BMASK;  // Clear ECOM1
+ 144   4              duty_direction1 = 1;                // Change direction for next time
+ 145   4            }
+ 146   3            else
+ 147   3            {
+ 148   4              duty_cycle1--;                      // Increase duty cycle
+ 149   4      
+ 150   4              PCA0_writeChannel(PCA0_CHAN1, duty_cycle1 << 8);
+ 151   4            }
+ 152   3          }
+ 153   2        }
+ 154   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    146    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----       2
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----       2
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
