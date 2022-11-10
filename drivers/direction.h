@@ -45,7 +45,7 @@ typedef enum {
 
 // Permet d'initialiser les 4 ports INs
 // TODO et l'interface avec le uC de Console/IHM
-void init_ports(void);
+void init_portsIn(void);
 
 
 // Permet d'aller dans la direction voulue :

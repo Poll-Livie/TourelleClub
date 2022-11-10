@@ -10,9 +10,16 @@
 // Permet d'aller dans la direction voulue :
 // void go_direction(tank_direction maDirection);
 
+void init_portsIn(void){
+  P1MDOUT |= P1MDOUT_B0__PUSH_PULL| P1MDOUT_B1__PUSH_PULL | P1MDOUT_B2__PUSH_PULL
+      | P1MDOUT_B3__PUSH_PULL;
+  // Set Pins P1.0 to P1.3 as Output for controlling IN 1,2,3,4 ;
+}
+
+
 // Permet d'avancer a une vitesse donnée (valeur a mettre dans le PWM)
 void go_forward(uint8_t speed){
-  // TODO
+  // TODO Ajouter le changement de valeur des ports
 
   if ((PCA0CPM0 & PCA0CPM0_ECOM__BMASK) == PCA0CPM0_ECOM__DISABLED)
   {
