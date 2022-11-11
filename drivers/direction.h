@@ -55,7 +55,7 @@ void go_direction(tank_direction maDirection);
 void go_forward(uint8_t speed);
 
 // Permet de reculer a une vitesse donnée (valeur a mettre dans le PWM)
-void go_backwards(uint8_t speed);
+void go_backward(uint8_t speed);
 
 // Permet de tourner a droite a une vitesse donnée (valeur a mettre dans le PWM)
 void turn_right(uint8_t speed);

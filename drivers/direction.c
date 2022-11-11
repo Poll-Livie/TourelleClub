@@ -22,8 +22,8 @@ void init_portsIn(void){
 // Permet d'avancer a une vitesse donnée (valeur a mettre dans le PWM)
 void go_forward(uint8_t speed){
   // TODO Ajouter le changement de valeur des ports
-  P1 |=   0xA0;   // 1010
-  P1 &=  ~0x50;   // 0101
+  P1 |=   0x0A;   // 1010
+  P1 &=  ~0x05;   // 0101
 
   if ((PCA0CPM0 & PCA0CPM0_ECOM__BMASK) == PCA0CPM0_ECOM__DISABLED)
   {
@@ -46,10 +46,10 @@ void go_forward(uint8_t speed){
 }
 
 // Permet de reculer a une vitesse donnée (valeur a mettre dans le PWM)
-void go_backwards(uint8_t speed){
+void go_backward(uint8_t speed){
 
-  P1 |=   0x50;   // 0101
-  P1 &=  ~0xA0;   // 1010
+  P1 |=   0x05;   // 0101
+  P1 &=  ~0x0A;   // 1010
 
   if ((PCA0CPM0 & PCA0CPM0_ECOM__BMASK) == PCA0CPM0_ECOM__DISABLED)
   {
@@ -72,8 +72,8 @@ void go_backwards(uint8_t speed){
 
 // Permet de tourner a droite a une vitesse donnée (valeur a mettre dans le PWM)
 void turn_right(uint8_t speed){
-  P1 |=   0x60;   // 0110
-  P1 &=  ~0x90;   // 1001
+  P1 |=   0x06;   // 0110
+  P1 &=  ~0x09;   // 1001
 
   if ((PCA0CPM0 & PCA0CPM0_ECOM__BMASK) == PCA0CPM0_ECOM__DISABLED)
   {
@@ -96,8 +96,8 @@ void turn_right(uint8_t speed){
 
 // Permet de tourner a gauche a une vitesse donnée (valeur a mettre dans le PWM)
 void turn_left(uint8_t speed){
-  P1 |=   0x90;   // 1001
-  P1 &=  ~0x60;   // 0110
+  P1 |=   0x09;   // 1001
+  P1 &=  ~0x06;   // 0110
 
   if ((PCA0CPM0 & PCA0CPM0_ECOM__BMASK) == PCA0CPM0_ECOM__DISABLED)
   {

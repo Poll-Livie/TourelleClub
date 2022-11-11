@@ -118,16 +118,16 @@ void SendResponse(uint8_t command)
 
     case SPI_WRITE_BUFFER:
       for (i = 0; i < MAX_BUFFER_SIZE; i++)
-      {
-        test_array_rx[i] = TransferByte(0xFF);
-      }
+        {
+          test_array_rx[i] = TransferByte(0xFF);
+        }
       break;
 
     case SPI_READ_BUFFER:
       for (i = 0; i < MAX_BUFFER_SIZE; i++)
-      {
-        TransferByte(test_array_rx[i]);
-      }
+        {
+          TransferByte(test_array_rx[i]);
+        }
       break;
 
     case SLAVE_LED_ON:
@@ -152,18 +152,13 @@ void SiLabs_Startup (void)
 {
   // Disable the watchdog here
 }
- 
+
 //-----------------------------------------------------------------------------
 // Main Routine
 //-----------------------------------------------------------------------------
 void main(void)
 {
-  // uint16_t delay_count;             // Used to implement a delay
-  bool duty_direction0 = 0;          // Module 0: 0 = Decrease; 1 = Increase
-  bool duty_direction1 = 0;          // Module 1: 0 = Increase; 1 = Decrease
 
-  uint8_t duty_cycle0 = 0x80;
-  uint8_t duty_cycle1 = 0xFF;
 
   uint8_t command;
 
@@ -172,15 +167,48 @@ void main(void)
   init_portsIn();
 
   while (1)
-  {
+    {
       // command = ReceiveCommand();
 
       // Send the command response to the master
       // SendResponse(command);
 
-      go_forward(0x80);
 
+    }
+}
 
+void test_moteur(){
+  uint16_t delay_count;               // Used to implement a delay
+  uint8_t duty_direction0 = 1;        // Module 0: 0 = Decrease; 1 = Increase
+  bool duty_direction1 = 0;           // Module 1: 0 = Increase; 1 = Decrease
+
+  uint8_t duty_cycle0 = 0x80;
+  uint8_t duty_cycle1 = 0xFF;
+  for (delay_count = 30000; delay_count > 0; delay_count--);
+
+  if (duty_direction1 == 1 ){
+      duty_cycle0 = duty_cycle0 + duty_direction0;
+      go_backward(duty_cycle0);
+
+      if (duty_cycle0 == 0x2F) {
+          duty_direction0 = -1;
+          duty_direction1 = 0;
+      }
+      if (duty_cycle0 == 0x00) {
+          duty_direction0 = 1;
+      }
+  }
+  else {
+      duty_cycle0 = duty_cycle0 + duty_direction0;
+      go_forward(duty_cycle0);
+
+      if (duty_cycle0 == 0x2F) {
+          duty_direction0 = -1;
+          duty_direction1 = 1;
+      }
+      if (duty_cycle0 == 0x00) {
+          duty_direction0 = 1;
+      }
   }
 }
 

@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.0.0   PCA_LIB_8BITCENTERPWM                                             11/11/2022 13:14:13 PAGE 1   
+C51 COMPILER V9.60.0.0   PCA_LIB_8BITCENTERPWM                                             11/11/2022 16:07:14 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE PCA_LIB_8BITCENTERPWM
@@ -63,7 +63,7 @@ line level    source
   43          //
   44          // Release 0.1 (ST)
   45          //    - Initial Revision
-C51 COMPILER V9.60.0.0   PCA_LIB_8BITCENTERPWM                                             11/11/2022 13:14:13 PAGE 2   
+C51 COMPILER V9.60.0.0   PCA_LIB_8BITCENTERPWM                                             11/11/2022 16:07:14 PAGE 2   
 
   46          //    - 10 OCT 2014
   47          //
@@ -128,7 +128,7 @@ line level    source
  106          {
  107   1        uint8_t i;
  108   1      
-C51 COMPILER V9.60.0.0   PCA_LIB_8BITCENTERPWM                                             11/11/2022 13:14:13 PAGE 3   
+C51 COMPILER V9.60.0.0   PCA_LIB_8BITCENTERPWM                                             11/11/2022 16:07:14 PAGE 3   
 
  109   1        switch (command)
  110   1        {
@@ -142,16 +142,16 @@ line level    source
  118   2      
  119   2          case SPI_WRITE_BUFFER:
  120   2            for (i = 0; i < MAX_BUFFER_SIZE; i++)
- 121   2            {
- 122   3              test_array_rx[i] = TransferByte(0xFF);
- 123   3            }
+ 121   2              {
+ 122   3                test_array_rx[i] = TransferByte(0xFF);
+ 123   3              }
  124   2            break;
  125   2      
  126   2          case SPI_READ_BUFFER:
  127   2            for (i = 0; i < MAX_BUFFER_SIZE; i++)
- 128   2            {
- 129   3              TransferByte(test_array_rx[i]);
- 130   3            }
+ 128   2              {
+ 129   3                TransferByte(test_array_rx[i]);
+ 130   3              }
  131   2            break;
  132   2      
  133   2          case SLAVE_LED_ON:
@@ -176,14 +176,14 @@ line level    source
  152          {
  153   1        // Disable the watchdog here
  154   1      }
- 155           
+ 155          
  156          //-----------------------------------------------------------------------------
  157          // Main Routine
  158          //-----------------------------------------------------------------------------
  159          void main(void)
  160          {
- 161   1        // uint16_t delay_count;             // Used to implement a delay
- 162   1        bool duty_direction0 = 0;          // Module 0: 0 = Decrease; 1 = Increase
+ 161   1        uint16_t delay_count;             // Used to implement a delay
+ 162   1        uint8_t duty_direction0 = 1;          // Module 0: 0 = Decrease; 1 = Increase
  163   1        bool duty_direction1 = 0;          // Module 1: 0 = Increase; 1 = Decrease
  164   1      
  165   1        uint8_t duty_cycle0 = 0x80;
@@ -193,112 +193,143 @@ line level    source
  169   1      
  170   1      
  171   1        enter_DefaultMode_from_RESET();
-C51 COMPILER V9.60.0.0   PCA_LIB_8BITCENTERPWM                                             11/11/2022 13:14:13 PAGE 4   
+C51 COMPILER V9.60.0.0   PCA_LIB_8BITCENTERPWM                                             11/11/2022 16:07:14 PAGE 4   
 
  172   1        init_portsIn();
  173   1      
  174   1        while (1)
- 175   1        {
+ 175   1          {
  176   2            // command = ReceiveCommand();
  177   2      
  178   2            // Send the command response to the master
  179   2            // SendResponse(command);
  180   2      
- 181   2            go_forward(0x80);
+ 181   2            for (delay_count = 30000; delay_count > 0; delay_count--);
  182   2      
- 183   2      
- 184   2        }
- 185   1      }
+ 183   2            if (duty_direction1 == 1 ){
+ 184   3                duty_cycle0 = duty_cycle0 + duty_direction0;
+ 185   3                go_backward(duty_cycle0);
+ 186   3      
+ 187   3                if (duty_cycle0 == 0x2F) {
+ 188   4                    duty_direction0 = -1;
+ 189   4                    duty_direction1 = 0;
+ 190   4                }
+ 191   3                if (duty_cycle0 == 0x00) {
+ 192   4                    duty_direction0 = 1;
+ 193   4                }
+ 194   3            }
+ 195   2            else {
+ 196   3                duty_cycle0 = duty_cycle0 + duty_direction0;
+ 197   3                go_forward(duty_cycle0);
+ 198   3      
+ 199   3                if (duty_cycle0 == 0x2F) {
+ 200   4                    duty_direction0 = -1;
+ 201   4                    duty_direction1 = 1;
+ 202   4                }
+ 203   3                if (duty_cycle0 == 0x00) {
+ 204   4                    duty_direction0 = 1;
+ 205   4                }
+ 206   3      
+ 207   3            }
+ 208   2      
+ 209   2            for (delay_count = 65000; delay_count > 0; delay_count--);
+ 210   2      
+ 211   2      
+ 212   2      
+ 213   2          }
+ 214   1      }
 *** WARNING C280 IN LINE 168 OF /Users/paul_leveque/Documents/10_Projets/EFM8BB1_PCA_Lib_8bitCenterPWM/src/PCA_Lib_8bitC
              -enterPWM.c: 'command': unreferenced local variable
- 186          
- 187          
- 188          /*
- 189           * // Wait
- 190              for (delay_count = 30000; delay_count > 0; delay_count--);
- 191          
- 192              // Module 0
- 193              if (duty_direction0 == 1)               // Direction = Increase
- 194              {
- 195                // First, check the ECOM0 bit
- 196                if ((PCA0CPM0 & PCA0CPM0_ECOM__BMASK) == PCA0CPM0_ECOM__DISABLED)
- 197                {
- 198                  PCA0CPM0 |= PCA0CPM0_ECOM__BMASK;   // Set ECOM0 if it is '0'
- 199                }
- 200                else                                  // Increase duty cycle otherwise
- 201                {
- 202                  duty_cycle0--;                      // Increase duty cycle
- 203          
- 204                  PCA0_writeChannel(PCA0_CHAN0, duty_cycle0 << 8);
- 205          
- 206                  if (duty_cycle0 == 0x00)
- 207                  {
- 208                    duty_direction0 = 0;              // Change direction for next time
- 209                  }
- 210                }
- 211              }
- 212              else                                    // Direction = Decrease
- 213              {
- 214                if (duty_cycle0 == 0xFF)
- 215                {
- 216                  PCA0CPM0 &= ~PCA0CPM0_ECOM__BMASK;  // Clear ECOM0
- 217                  duty_direction0 = 1;                // Change direction for next time
- 218                }
- 219                else
- 220                {
- 221                  duty_cycle0++;                      // Decrease duty cycle
- 222          
- 223                  PCA0_writeChannel(PCA0_CHAN0, duty_cycle0 << 8);
- 224                }
- 225              }
- 226          
- 227              // Module 1
- 228              if (duty_direction1 == 1)               // Direction = Decrease
- 229              {
- 230                // First, check the ECOM1 bit
- 231                if ((PCA0CPM1 & PCA0CPM1_ECOM__BMASK) == PCA0CPM1_ECOM__DISABLED)
- 232                {
-C51 COMPILER V9.60.0.0   PCA_LIB_8BITCENTERPWM                                             11/11/2022 13:14:13 PAGE 5   
+ 215          
+ 216          
+ 217          /*
+ 218           * // Wait
+ 219              for (delay_count = 30000; delay_count > 0; delay_count--);
+ 220          
+ 221              // Module 0
+ 222              if (duty_direction0 == 1)               // Direction = Increase
+ 223              {
+ 224                // First, check the ECOM0 bit
+ 225                if ((PCA0CPM0 & PCA0CPM0_ECOM__BMASK) == PCA0CPM0_ECOM__DISABLED)
+ 226                {
+ 227                  PCA0CPM0 |= PCA0CPM0_ECOM__BMASK;   // Set ECOM0 if it is '0'
+ 228                }
+ 229                else                                  // Increase duty cycle otherwise
+ 230                {
+ 231                  duty_cycle0--;                      // Increase duty cycle
+ 232          
+C51 COMPILER V9.60.0.0   PCA_LIB_8BITCENTERPWM                                             11/11/2022 16:07:14 PAGE 5   
 
- 233                  PCA0CPM1 |= PCA0CPM1_ECOM__BMASK;   // Set ECOM1 if it is '0'
- 234                }
- 235                else                                  // Increase duty cycle otherwise
- 236                {
- 237                  duty_cycle1++;                      // Decrease duty cycle
- 238          
- 239                  PCA0_writeChannel(PCA0_CHAN1, duty_cycle1 << 8);
- 240          
- 241                  if (duty_cycle1 == 0xFF)
- 242                  {
- 243                    duty_direction1 = 0;              // Change direction for next time
- 244                  }
- 245                }
- 246              }
- 247              else                                    // Direction = Increase
- 248              {
- 249                if (duty_cycle1 == 0x00)
- 250                {
- 251                  PCA0CPM1 &= ~PCA0CPM1_ECOM__BMASK;  // Clear ECOM1
- 252                  duty_direction1 = 1;                // Change direction for next time
+ 233                  PCA0_writeChannel(PCA0_CHAN0, duty_cycle0 << 8);
+ 234          
+ 235                  if (duty_cycle0 == 0x00)
+ 236                  {
+ 237                    duty_direction0 = 0;              // Change direction for next time
+ 238                  }
+ 239                }
+ 240              }
+ 241              else                                    // Direction = Decrease
+ 242              {
+ 243                if (duty_cycle0 == 0xFF)
+ 244                {
+ 245                  PCA0CPM0 &= ~PCA0CPM0_ECOM__BMASK;  // Clear ECOM0
+ 246                  duty_direction0 = 1;                // Change direction for next time
+ 247                }
+ 248                else
+ 249                {
+ 250                  duty_cycle0++;                      // Decrease duty cycle
+ 251          
+ 252                  PCA0_writeChannel(PCA0_CHAN0, duty_cycle0 << 8);
  253                }
- 254                else
- 255                {
- 256                  duty_cycle1--;                      // Increase duty cycle
- 257          
- 258                  PCA0_writeChannel(PCA0_CHAN1, duty_cycle1 << 8);
- 259                }
- 260              }
- 261           */
+ 254              }
+ 255          
+ 256              // Module 1
+ 257              if (duty_direction1 == 1)               // Direction = Decrease
+ 258              {
+ 259                // First, check the ECOM1 bit
+ 260                if ((PCA0CPM1 & PCA0CPM1_ECOM__BMASK) == PCA0CPM1_ECOM__DISABLED)
+ 261                {
+ 262                  PCA0CPM1 |= PCA0CPM1_ECOM__BMASK;   // Set ECOM1 if it is '0'
+ 263                }
+ 264                else                                  // Increase duty cycle otherwise
+ 265                {
+ 266                  duty_cycle1++;                      // Decrease duty cycle
+ 267          
+ 268                  PCA0_writeChannel(PCA0_CHAN1, duty_cycle1 << 8);
+ 269          
+ 270                  if (duty_cycle1 == 0xFF)
+ 271                  {
+ 272                    duty_direction1 = 0;              // Change direction for next time
+ 273                  }
+ 274                }
+ 275              }
+ 276              else                                    // Direction = Increase
+ 277              {
+ 278                if (duty_cycle1 == 0x00)
+ 279                {
+ 280                  PCA0CPM1 &= ~PCA0CPM1_ECOM__BMASK;  // Clear ECOM1
+ 281                  duty_direction1 = 1;                // Change direction for next time
+ 282                }
+ 283                else
+ 284                {
+ 285                  duty_cycle1--;                      // Increase duty cycle
+ 286          
+ 287                  PCA0_writeChannel(PCA0_CHAN1, duty_cycle1 << 8);
+ 288                }
+ 289              }
+ 290           */
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    140    ----
+   CODE SIZE        =    245    ----
    CONSTANT SIZE    =   ----    ----
+C51 COMPILER V9.60.0.0   PCA_LIB_8BITCENTERPWM                                             11/11/2022 16:07:14 PAGE 6   
+
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
-   DATA SIZE        =     27       4
+   DATA SIZE        =     27       7
    IDATA SIZE       =   ----    ----
-   BIT SIZE         =   ----       2
+   BIT SIZE         =   ----       1
    EDATA SIZE       =   ----    ----
    HDATA SIZE       =   ----    ----
    XDATA CONST SIZE =   ----    ----
