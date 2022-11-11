@@ -7,9 +7,10 @@
     <property object="CROSSBAR0" propertyId="xbar0.pca0.cex" value="CEX0 and CEX1"/>
     <property object="CROSSBAR0" propertyId="xbar0.spi0.clockdata" value="Enabled"/>
     <property object="DefaultMode" propertyId="mode.diagramLocation" value="100, 100"/>
+    <property object="INTERRUPT_0" propertyId="ABPeripheral.included" value="true"/>
+    <property object="INTERRUPT_0" propertyId="interrupt.interruptenable.enablespi0interrupt" value="Enabled"/>
     <property object="P0.1" propertyId="ports.settings.iomode" value="Digital Push-Pull Output"/>
     <property object="P0.1" propertyId="ports.settings.outputmode" value="Push-pull"/>
-    <property object="P0.3" propertyId="ports.settings.skip" value="Skipped"/>
     <property object="P0.4" propertyId="ports.settings.skip" value="Skipped"/>
     <property object="P0.5" propertyId="ports.settings.skip" value="Skipped"/>
     <property object="P0.6" propertyId="ports.settings.skip" value="Skipped"/>
@@ -48,9 +49,12 @@
     <property object="PCA_0" propertyId="pca.pcapwmconfiguration.cex0centeralignmentenable" value="Center-aligned PWM"/>
     <property object="PCA_0" propertyId="pca.pcapwmconfiguration.cex1centeralignmentenable" value="Center-aligned PWM"/>
     <property object="SPI_0" propertyId="ABPeripheral.included" value="true"/>
+    <property object="SPI_0" propertyId="spi.clockrate.spiclockfrequencyactual" value="510.416 kHz"/>
+    <property object="SPI_0" propertyId="spi.clockrate.spiclockfrequencytarget" value="510000"/>
     <property object="SPI_0" propertyId="spi.clockrate.sysclk" value="24.500 MHz"/>
-    <property object="SPI_0" propertyId="spi.clockrate.sysclkdividercoefficientspi0ckr" value="7"/>
-    <property object="SPI_0" propertyId="spi.control.slaveselectmode" value="Slave or master 3-wire mode"/>
+    <property object="SPI_0" propertyId="spi.clockrate.sysclkdividercoefficientspi0ckr" value="23"/>
+    <property object="SPI_0" propertyId="spi.control.busmodeslave" value="Slave 4-wire mode"/>
+    <property object="SPI_0" propertyId="spi.control.spienable" value="Enabled"/>
     <property object="WDT_0" propertyId="ABPeripheral.included" value="true"/>
     <property object="WDT_0" propertyId="wdt.watchdogcontrol.wdtenable" value="Disable"/>
   </mode>

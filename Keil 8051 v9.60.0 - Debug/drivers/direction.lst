@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.0.0   DIRECTION                                                         11/10/2022 23:22:24 PAGE 1   
+C51 COMPILER V9.60.0.0   DIRECTION                                                         11/11/2022 13:05:07 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE DIRECTION
@@ -8,12 +8,12 @@ COMPILER INVOKED BY: Z:\Applications\Simplicity Studio.app\Contents\Eclipse\deve
                     -TEND ROM(LARGE) WARNINGLEVEL(2) FLOATFUZZY(3) OPTIMIZE(8,SPEED) DEFINE(DEBUG=1) INTVECTOR(0X0000) INTPROMOTE INCDIR(/Use
                     -rs/paul_leveque/Documents/10_Projets/EFM8BB1_PCA_Lib_8bitCenterPWM/inc;/Users/paul_leveque/Documents/10_Projets/EFM8BB1_
                     -PCA_Lib_8bitCenterPWM/inc/config;/Users/paul_leveque/Documents/10_Projets/EFM8BB1_PCA_Lib_8bitCenterPWM/drivers;/Applica
-                    -tions/Simplicity Studio.app/Contents/Eclipse/developer/sdks/8051/v4.2.4//Device/EFM8BB1/peripheral_driver/inc;/Applicati
-                    -ons/Simplicity Studio.app/Contents/Eclipse/developer/sdks/8051/v4.2.4//Lib/efm8_assert;/Applications/Simplicity Studio.a
-                    -pp/Contents/Eclipse/developer/sdks/8051/v4.2.4//kits/common/bsp;/Applications/Simplicity Studio.app/Contents/Eclipse/dev
-                    -eloper/sdks/8051/v4.2.4//kits/EFM8BB1_LCK/config;/Applications/Simplicity Studio.app/Contents/Eclipse/developer/sdks/805
-                    -1/v4.2.4//Device/shared/si8051Base;/Applications/Simplicity Studio.app/Contents/Eclipse/developer/sdks/8051/v4.2.4//Devi
-                    -ce/EFM8BB1/inc) PRINT(.\drivers/direction.lst) COND PAGEWIDTH(120) PAGELENGTH(65) OBJECT(.\drivers/direction.OBJ)
+                    -tions/Simplicity Studio.app/Contents/Eclipse/developer/sdks/8051/v4.2.4//Lib/efm8_assert;/Applications/Simplicity Studio
+                    -.app/Contents/Eclipse/developer/sdks/8051/v4.2.4//Device/shared/si8051Base;/Applications/Simplicity Studio.app/Contents/
+                    -Eclipse/developer/sdks/8051/v4.2.4//Device/EFM8BB1/inc;/Applications/Simplicity Studio.app/Contents/Eclipse/developer/sd
+                    -ks/8051/v4.2.4//kits/common/bsp;/Applications/Simplicity Studio.app/Contents/Eclipse/developer/sdks/8051/v4.2.4//kits/EF
+                    -M8BB1_LCK/config;/Applications/Simplicity Studio.app/Contents/Eclipse/developer/sdks/8051/v4.2.4//Device/EFM8BB1/periphe
+                    -ral_driver/inc) PRINT(.\drivers/direction.lst) COND PAGEWIDTH(120) PAGELENGTH(65) OBJECT(.\drivers/direction.OBJ)
 
 line level    source
 
@@ -24,128 +24,130 @@ line level    source
    5           *      Author: paul_leveque
    6           */
    7          
-   8          #include "direction.h"
-   9          
-  10          // Permet d'aller dans la direction voulue :
-  11          // void go_direction(tank_direction maDirection);
-  12          
-  13          void init_portsIn(void){
-  14   1        P1MDOUT |= P1MDOUT_B0__PUSH_PULL| P1MDOUT_B1__PUSH_PULL | P1MDOUT_B2__PUSH_PULL
-  15   1            | P1MDOUT_B3__PUSH_PULL;
-  16   1        // Set Pins P1.0 to P1.3 as Output for controlling IN 1,2,3,4 ;
-  17   1      }
-  18          
-  19          
-  20          // Permet d'avancer a une vitesse donnée (valeur a mettre dans le PWM)
-  21          void go_forward(uint8_t speed){
-  22   1        // TODO Ajouter le changement de valeur des ports
-  23   1        P1 |=   0xA0;   // 1010
-  24   1        P1 &=  ~0x50;   // 0101
-  25   1      
-  26   1        if ((PCA0CPM0 & PCA0CPM0_ECOM__BMASK) == PCA0CPM0_ECOM__DISABLED)
-  27   1        {
-  28   2          PCA0CPM0 |= PCA0CPM0_ECOM__BMASK;   // Set ECOM0 if it is '0'
-  29   2        }
-  30   1        else {
-  31   2          PCA0_writeChannel(PCA0_CHAN0, speed << 8);
-  32   2        }
-  33   1      
-  34   1        if ((PCA0CPM1 & PCA0CPM1_ECOM__BMASK) == PCA0CPM1_ECOM__DISABLED)
-  35   1        {
-  36   2          PCA0CPM1 |= PCA0CPM1_ECOM__BMASK;   // Set ECOM1 if it is '0'
-  37   2        }
-  38   1        else {
-  39   2          PCA0_writeChannel(PCA0_CHAN1, speed << 8);
-  40   2        }
-  41   1      
-  42   1        // + set pins IN(1:4) low or high accordingly
+   8          #include <SI_EFM8BB1_Register_Enums.h>
+   9          #include "pca_0.h"
+  10          #include "direction.h"
+  11          
+  12          // Permet d'aller dans la direction voulue :
+  13          // void go_direction(tank_direction maDirection);
+  14          
+  15          void init_portsIn(void){
+  16   1        P1MDOUT |= P1MDOUT_B0__PUSH_PULL| P1MDOUT_B1__PUSH_PULL | P1MDOUT_B2__PUSH_PULL
+  17   1            | P1MDOUT_B3__PUSH_PULL;
+  18   1        // Set Pins P1.0 to P1.3 as Output for controlling IN 1,2,3,4 ;
+  19   1      }
+  20          
+  21          
+  22          // Permet d'avancer a une vitesse donnée (valeur a mettre dans le PWM)
+  23          void go_forward(uint8_t speed){
+  24   1        // TODO Ajouter le changement de valeur des ports
+  25   1        P1 |=   0xA0;   // 1010
+  26   1        P1 &=  ~0x50;   // 0101
+  27   1      
+  28   1        if ((PCA0CPM0 & PCA0CPM0_ECOM__BMASK) == PCA0CPM0_ECOM__DISABLED)
+  29   1        {
+  30   2          PCA0CPM0 |= PCA0CPM0_ECOM__BMASK;   // Set ECOM0 if it is '0'
+  31   2        }
+  32   1        else {
+  33   2          PCA0_writeChannel(PCA0_CHAN0, speed << 8);
+  34   2        }
+  35   1      
+  36   1        if ((PCA0CPM1 & PCA0CPM1_ECOM__BMASK) == PCA0CPM1_ECOM__DISABLED)
+  37   1        {
+  38   2          PCA0CPM1 |= PCA0CPM1_ECOM__BMASK;   // Set ECOM1 if it is '0'
+  39   2        }
+  40   1        else {
+  41   2          PCA0_writeChannel(PCA0_CHAN1, speed << 8);
+  42   2        }
   43   1      
-  44   1      }
-  45          
-  46          // Permet de reculer a une vitesse donnée (valeur a mettre dans le PWM)
-C51 COMPILER V9.60.0.0   DIRECTION                                                         11/10/2022 23:22:24 PAGE 2   
+  44   1        // + set pins IN(1:4) low or high accordingly
+  45   1      
+  46   1      }
+C51 COMPILER V9.60.0.0   DIRECTION                                                         11/11/2022 13:05:07 PAGE 2   
 
-  47          void go_backwards(uint8_t speed){
-  48   1      
-  49   1        P1 |=   0x50;   // 0101
-  50   1        P1 &=  ~0xA0;   // 1010
-  51   1      
-  52   1        if ((PCA0CPM0 & PCA0CPM0_ECOM__BMASK) == PCA0CPM0_ECOM__DISABLED)
-  53   1        {
-  54   2          PCA0CPM0 |= PCA0CPM0_ECOM__BMASK;   // Set ECOM0 if it is '0'
-  55   2        }
-  56   1        else {
-  57   2          PCA0_writeChannel(PCA0_CHAN0, speed << 8);
-  58   2        }
-  59   1      
-  60   1        if ((PCA0CPM1 & PCA0CPM1_ECOM__BMASK) == PCA0CPM1_ECOM__DISABLED)
-  61   1        {
-  62   2          PCA0CPM1 |= PCA0CPM1_ECOM__BMASK;   // Set ECOM1 if it is '0'
-  63   2        }
-  64   1        else {
-  65   2          PCA0_writeChannel(PCA0_CHAN1, speed << 8);
-  66   2        }
-  67   1        // + set pins IN(1:4) low or high accordingly
-  68   1      
-  69   1      }
-  70          
-  71          // Permet de tourner a droite a une vitesse donnée (valeur a mettre dans le PWM)
-  72          void turn_right(uint8_t speed){
-  73   1        P1 |=   0x60;   // 0110
-  74   1        P1 &=  ~0x90;   // 1001
-  75   1      
-  76   1        if ((PCA0CPM0 & PCA0CPM0_ECOM__BMASK) == PCA0CPM0_ECOM__DISABLED)
-  77   1        {
-  78   2          PCA0CPM0 |= PCA0CPM0_ECOM__BMASK;   // Set ECOM0 if it is '0'
-  79   2        }
-  80   1        else {
-  81   2          PCA0_writeChannel(PCA0_CHAN0, speed << 8);
-  82   2        }
-  83   1      
-  84   1        if ((PCA0CPM1 & PCA0CPM1_ECOM__BMASK) == PCA0CPM1_ECOM__DISABLED)
-  85   1        {
-  86   2          PCA0CPM1 |= PCA0CPM1_ECOM__BMASK;   // Set ECOM1 if it is '0'
-  87   2        }
-  88   1        else {
-  89   2          PCA0_writeChannel(PCA0_CHAN1, speed << 8);
-  90   2        }
-  91   1        // + set pins IN(1:4) low or high accordingly
-  92   1      
-  93   1      }
-  94          
-  95          // Permet de tourner a gauche a une vitesse donnée (valeur a mettre dans le PWM)
-  96          void turn_left(uint8_t speed){
-  97   1        P1 |=   0x90;   // 1001
-  98   1        P1 &=  ~0x60;   // 0110
-  99   1      
- 100   1        if ((PCA0CPM0 & PCA0CPM0_ECOM__BMASK) == PCA0CPM0_ECOM__DISABLED)
- 101   1        {
- 102   2          PCA0CPM0 |= PCA0CPM0_ECOM__BMASK;   // Set ECOM0 if it is '0'
- 103   2        }
- 104   1        else {
- 105   2          PCA0_writeChannel(PCA0_CHAN0, speed << 8);
- 106   2        }
- 107   1      
- 108   1        if ((PCA0CPM1 & PCA0CPM1_ECOM__BMASK) == PCA0CPM1_ECOM__DISABLED)
- 109   1        {
-C51 COMPILER V9.60.0.0   DIRECTION                                                         11/10/2022 23:22:24 PAGE 3   
+  47          
+  48          // Permet de reculer a une vitesse donnée (valeur a mettre dans le PWM)
+  49          void go_backwards(uint8_t speed){
+  50   1      
+  51   1        P1 |=   0x50;   // 0101
+  52   1        P1 &=  ~0xA0;   // 1010
+  53   1      
+  54   1        if ((PCA0CPM0 & PCA0CPM0_ECOM__BMASK) == PCA0CPM0_ECOM__DISABLED)
+  55   1        {
+  56   2          PCA0CPM0 |= PCA0CPM0_ECOM__BMASK;   // Set ECOM0 if it is '0'
+  57   2        }
+  58   1        else {
+  59   2          PCA0_writeChannel(PCA0_CHAN0, speed << 8);
+  60   2        }
+  61   1      
+  62   1        if ((PCA0CPM1 & PCA0CPM1_ECOM__BMASK) == PCA0CPM1_ECOM__DISABLED)
+  63   1        {
+  64   2          PCA0CPM1 |= PCA0CPM1_ECOM__BMASK;   // Set ECOM1 if it is '0'
+  65   2        }
+  66   1        else {
+  67   2          PCA0_writeChannel(PCA0_CHAN1, speed << 8);
+  68   2        }
+  69   1        // + set pins IN(1:4) low or high accordingly
+  70   1      
+  71   1      }
+  72          
+  73          // Permet de tourner a droite a une vitesse donnée (valeur a mettre dans le PWM)
+  74          void turn_right(uint8_t speed){
+  75   1        P1 |=   0x60;   // 0110
+  76   1        P1 &=  ~0x90;   // 1001
+  77   1      
+  78   1        if ((PCA0CPM0 & PCA0CPM0_ECOM__BMASK) == PCA0CPM0_ECOM__DISABLED)
+  79   1        {
+  80   2          PCA0CPM0 |= PCA0CPM0_ECOM__BMASK;   // Set ECOM0 if it is '0'
+  81   2        }
+  82   1        else {
+  83   2          PCA0_writeChannel(PCA0_CHAN0, speed << 8);
+  84   2        }
+  85   1      
+  86   1        if ((PCA0CPM1 & PCA0CPM1_ECOM__BMASK) == PCA0CPM1_ECOM__DISABLED)
+  87   1        {
+  88   2          PCA0CPM1 |= PCA0CPM1_ECOM__BMASK;   // Set ECOM1 if it is '0'
+  89   2        }
+  90   1        else {
+  91   2          PCA0_writeChannel(PCA0_CHAN1, speed << 8);
+  92   2        }
+  93   1        // + set pins IN(1:4) low or high accordingly
+  94   1      
+  95   1      }
+  96          
+  97          // Permet de tourner a gauche a une vitesse donnée (valeur a mettre dans le PWM)
+  98          void turn_left(uint8_t speed){
+  99   1        P1 |=   0x90;   // 1001
+ 100   1        P1 &=  ~0x60;   // 0110
+ 101   1      
+ 102   1        if ((PCA0CPM0 & PCA0CPM0_ECOM__BMASK) == PCA0CPM0_ECOM__DISABLED)
+ 103   1        {
+ 104   2          PCA0CPM0 |= PCA0CPM0_ECOM__BMASK;   // Set ECOM0 if it is '0'
+ 105   2        }
+ 106   1        else {
+ 107   2          PCA0_writeChannel(PCA0_CHAN0, speed << 8);
+ 108   2        }
+ 109   1      
+C51 COMPILER V9.60.0.0   DIRECTION                                                         11/11/2022 13:05:07 PAGE 3   
 
- 110   2          PCA0CPM1 |= PCA0CPM1_ECOM__BMASK;   // Set ECOM1 if it is '0'
- 111   2        }
- 112   1        else {
- 113   2          PCA0_writeChannel(PCA0_CHAN1, speed << 8);
- 114   2        }
- 115   1        // + set pins IN(1:4) low or high accordingly
- 116   1      
- 117   1      }
- 118          
- 119          // permet d'arreter les moteurs
- 120          void stop(){
- 121   1        PCA0CPM0 &= ~PCA0CPM0_ECOM__BMASK;  // Clear ECOM0
- 122   1        PCA0CPM1 &= ~PCA0CPM1_ECOM__BMASK;  // Clear ECOM0
- 123   1        // + set pins IN(1:4) low or high accordingly
- 124   1      
- 125   1      }
+ 110   1        if ((PCA0CPM1 & PCA0CPM1_ECOM__BMASK) == PCA0CPM1_ECOM__DISABLED)
+ 111   1        {
+ 112   2          PCA0CPM1 |= PCA0CPM1_ECOM__BMASK;   // Set ECOM1 if it is '0'
+ 113   2        }
+ 114   1        else {
+ 115   2          PCA0_writeChannel(PCA0_CHAN1, speed << 8);
+ 116   2        }
+ 117   1        // + set pins IN(1:4) low or high accordingly
+ 118   1      
+ 119   1      }
+ 120          
+ 121          // permet d'arreter les moteurs
+ 122          void stop(){
+ 123   1        PCA0CPM0 &= ~PCA0CPM0_ECOM__BMASK;  // Clear ECOM0
+ 124   1        PCA0CPM1 &= ~PCA0CPM1_ECOM__BMASK;  // Clear ECOM0
+ 125   1        // + set pins IN(1:4) low or high accordingly
+ 126   1      
+ 127   1      }
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE

@@ -8,6 +8,8 @@
 #define __EFM8_CONFIG_H__
 
 #define EFM8PDL_PCA0_USE_ISR              0
+#define EFM8PDL_SPI0_TX_SEGTYPE           SI_SEG_DATA
+#define EFM8PDL_SPI0_RX_SEGTYPE           SI_SEG_DATA
 
 #endif // __EFM8_CONFIG_H__
  

@@ -54,9 +54,19 @@
 			<locationURI>STUDIO_SDK_LOC/Device/EFM8BB1/peripheral_driver/inc/pca_0.h</locationURI>
 		</link>
 		<link>
+			<name>lib/efm8bb1/peripheralDrivers/inc/spi_0.h</name>
+			<type>1</type>
+			<locationURI>STUDIO_SDK_LOC/Device/EFM8BB1/peripheral_driver/inc/spi_0.h</locationURI>
+		</link>
+		<link>
 			<name>lib/efm8bb1/peripheralDrivers/src/pca_0.c</name>
 			<type>1</type>
 			<locationURI>STUDIO_SDK_LOC/Device/EFM8BB1/peripheral_driver/src/pca_0.c</locationURI>
+		</link>
+		<link>
+			<name>lib/efm8bb1/peripheralDrivers/src/spi_0.c</name>
+			<type>1</type>
+			<locationURI>STUDIO_SDK_LOC/Device/EFM8BB1/peripheral_driver/src/spi_0.c</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>

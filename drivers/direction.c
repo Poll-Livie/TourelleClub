@@ -5,6 +5,8 @@
  *      Author: paul_leveque
  */
 
+#include <SI_EFM8BB1_Register_Enums.h>
+#include "pca_0.h"
 #include "direction.h"
 
 // Permet d'aller dans la direction voulue :

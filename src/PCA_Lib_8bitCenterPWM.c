@@ -18,6 +18,10 @@
 // Resources:
 //   SYSCLK - 24.5 MHz HFOSC / 1
 //   PCA    - 8-bit PWM
+//   P0.0   - SPI SCK
+//   P0.1   - SPI MISO
+//   P0.2   - SPI MOSI
+//   P0.3   - SPI NSS
 //   P1.4   - PCA CEX0 / LED
 //
 //-----------------------------------------------------------------------------
@@ -48,10 +52,11 @@
 #include "bsp.h"
 #include "InitDevice.h"
 
-#include "pca_0.h"
 #include "SPI0_Lib_Slave.h"
 #include "spi_0.h"
 #include <string.h>
+
+#include "pca_0.h"
 
 #include "direction.h"
 //-----------------------------------------------------------------------------
@@ -168,10 +173,14 @@ void main(void)
 
   while (1)
   {
-      command = ReceiveCommand();
+      // command = ReceiveCommand();
 
       // Send the command response to the master
-      SendResponse(command);
+      // SendResponse(command);
+
+      go_forward(0x80);
+
+
   }
 }
 
