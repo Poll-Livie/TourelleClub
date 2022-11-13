@@ -125,3 +125,39 @@ void stop(){
   // + set pins IN(1:4) low or high accordingly
 
 }
+
+void test_moteur(void){
+  uint16_t delay_count;               // Used to implement a delay
+  uint8_t duty_direction0 = 1;        // Module 0: 0 = Decrease; 1 = Increase
+  bool duty_direction1 = 0;           // Module 1: 0 = Increase; 1 = Decrease
+
+  uint8_t duty_cycle0 = 0x80;
+  uint8_t duty_cycle1 = 0xFF;
+  for (delay_count = 30000; delay_count > 0; delay_count--);
+
+  if (duty_direction1 == 1 ){
+      duty_cycle0 = duty_cycle0 + duty_direction0;
+      go_backward(duty_cycle0);
+
+      if (duty_cycle0 == 0x2F) {
+          duty_direction0 = -1;
+          duty_direction1 = 0;
+      }
+      if (duty_cycle0 == 0x00) {
+          duty_direction0 = 1;
+      }
+  }
+  else {
+      duty_cycle0 = duty_cycle0 + duty_direction0;
+      go_forward(duty_cycle0);
+
+      if (duty_cycle0 == 0x2F) {
+          duty_direction0 = -1;
+          duty_direction1 = 1;
+      }
+      if (duty_cycle0 == 0x00) {
+          duty_direction0 = 1;
+      }
+  }
+}
+

@@ -66,4 +66,7 @@ void turn_left(uint8_t speed);
 // permet d'arreter les moteurs
 void stop(void);
 
+// permet de tester le fonctionnement des moteurs
+void test_moteur(void);
+
 #endif /* DRIVERS_DIRECTION_H_ */

@@ -22,6 +22,8 @@
 //   P0.1   - SPI MISO
 //   P0.2   - SPI MOSI
 //   P0.3   - SPI NSS
+//   P0.4   - UART0 TX
+//   P0.5   - UART0 RX
 //   P1.4   - PCA CEX0 / LED
 //
 //-----------------------------------------------------------------------------
@@ -52,13 +54,31 @@
 #include "bsp.h"
 #include "InitDevice.h"
 
-#include "SPI0_Lib_Slave.h"
-#include "spi_0.h"
-#include <string.h>
+/*
+ * #include "SPI0_Lib_Slave.h"
+ * #include "spi_0.h"
+ * #include <string.h>
+ *
+ */
+#include "uart_0.h"
 
 #include "pca_0.h"
 
 #include "direction.h"
+
+//-----------------------------------------------------------------------------
+// Global Constants
+//-----------------------------------------------------------------------------
+#define BUFFER_LENGTH   4
+
+//-----------------------------------------------------------------------------
+// Global Variables
+//-----------------------------------------------------------------------------
+SI_SEGMENT_VARIABLE(buffer[BUFFER_LENGTH], uint8_t, SI_SEG_XDATA);
+
+
+/*    SPI functionality ?
+
 //-----------------------------------------------------------------------------
 // Prototypes
 //-----------------------------------------------------------------------------
@@ -139,6 +159,8 @@ void SendResponse(uint8_t command)
       break;
   }
 }
+*/
+
 
 //-----------------------------------------------------------------------------
 // SiLabs_Startup() Routine
@@ -158,13 +180,13 @@ void SiLabs_Startup (void)
 //-----------------------------------------------------------------------------
 void main(void)
 {
-
-
   uint8_t command;
 
-
   enter_DefaultMode_from_RESET();
+  UART0_init(UART0_RX_ENABLE, UART0_WIDTH_8, UART0_MULTIPROC_DISABLE);
   init_portsIn();
+
+  IE_EA = 1;
 
   while (1)
     {
@@ -172,46 +194,43 @@ void main(void)
 
       // Send the command response to the master
       // SendResponse(command);
-
+      if ((UART0_rxBytesRemaining() == 0) && (UART0_txBytesRemaining() == 0))
+      {
+         UART0_readBuffer(buffer, BUFFER_LENGTH);
+      }
 
     }
 }
 
-void test_moteur(){
-  uint16_t delay_count;               // Used to implement a delay
-  uint8_t duty_direction0 = 1;        // Module 0: 0 = Decrease; 1 = Increase
-  bool duty_direction1 = 0;           // Module 1: 0 = Increase; 1 = Decrease
+//-----------------------------------------------------------------------------
+// UART ISR Callbacks
+//-----------------------------------------------------------------------------
+void UART0_receiveCompleteCb ()
+{
+   uint8_t i;
+   unsigned char byte;
 
-  uint8_t duty_cycle0 = 0x80;
-  uint8_t duty_cycle1 = 0xFF;
-  for (delay_count = 30000; delay_count > 0; delay_count--);
+   for (i = 0; i<BUFFER_LENGTH; i++)
+   {
+      byte = buffer[i];
 
-  if (duty_direction1 == 1 ){
-      duty_cycle0 = duty_cycle0 + duty_direction0;
-      go_backward(duty_cycle0);
+      /*
+       * Place to put Command Analysis
+       */
+      // if lower case letter
+      if ((byte >= 'a') && (byte <= 'z'))
+      {
+         byte -= 32;
+      }
 
-      if (duty_cycle0 == 0x2F) {
-          duty_direction0 = -1;
-          duty_direction1 = 0;
-      }
-      if (duty_cycle0 == 0x00) {
-          duty_direction0 = 1;
-      }
-  }
-  else {
-      duty_cycle0 = duty_cycle0 + duty_direction0;
-      go_forward(duty_cycle0);
-
-      if (duty_cycle0 == 0x2F) {
-          duty_direction0 = -1;
-          duty_direction1 = 1;
-      }
-      if (duty_cycle0 == 0x00) {
-          duty_direction0 = 1;
-      }
-  }
+      buffer[i] = byte;
+   }
+   UART0_writeBuffer(buffer, BUFFER_LENGTH);
 }
 
+void UART0_transmitCompleteCb ()
+{
+}
 
 /*
  * // Wait
