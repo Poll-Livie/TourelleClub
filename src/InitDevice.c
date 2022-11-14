@@ -28,6 +28,7 @@ enter_DefaultMode_from_RESET (void)
   PORTS_1_enter_DefaultMode_from_RESET ();
   PBCFG_0_enter_DefaultMode_from_RESET ();
   CLOCK_0_enter_DefaultMode_from_RESET ();
+  TIMER01_0_enter_DefaultMode_from_RESET ();
   TIMER_SETUP_0_enter_DefaultMode_from_RESET ();
   PCA_0_enter_DefaultMode_from_RESET ();
   PCACH_0_enter_DefaultMode_from_RESET ();
@@ -452,12 +453,15 @@ INTERRUPT_0_enter_DefaultMode_from_RESET (void)
 //================================================================================
 // TIMER01_0_enter_DefaultMode_from_RESET
 //================================================================================
-extern void TIMER01_0_enter_DefaultMode_from_RESET(void) {
+extern void
+TIMER01_0_enter_DefaultMode_from_RESET (void)
+{
   // $[Timer Initialization]
   //Save Timer Configuration
-  uint8_t TCON_save = TCON;
+  uint8_t TCON_save;
+  TCON_save = TCON;
   //Stop Timers
-  TCON &= TCON_TR0__BMASK & TCON_TR1__BMASK;
+  TCON &= ~TCON_TR0__BMASK & ~TCON_TR1__BMASK;
 
   // [Timer Initialization]$
 
@@ -468,9 +472,9 @@ extern void TIMER01_0_enter_DefaultMode_from_RESET(void) {
   // [TL0 - Timer 0 Low Byte]$
 
   // $[TH1 - Timer 1 High Byte]
-  /*
-  // TH1 (Timer 1 High Byte) = 0x96
-  */
+  /***********************************************************************
+   - Timer 1 High Byte = 0x96
+   ***********************************************************************/
   TH1 = (0x96 << TH1_TH1__SHIFT);
   // [TH1 - Timer 1 High Byte]$
 
@@ -479,10 +483,9 @@ extern void TIMER01_0_enter_DefaultMode_from_RESET(void) {
 
   // $[Timer Restoration]
   //Restore Timer Configuration
-  TCON = TCON_save;
+  TCON |= (TCON_save & TCON_TR0__BMASK) | (TCON_save & TCON_TR1__BMASK);
 
   // [Timer Restoration]$
-
 
 }
 

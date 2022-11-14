@@ -12,6 +12,11 @@
 // #include "InitDevice.h"
 // #include "pca_0.h"
 
+#define FORWARD_PROTOCOL_VAL "f"
+#define BACKWARD_PROTOCOL_VAL "b"
+#define TURN_LEFT_PROTOCOL_VAL "l"
+#define TURN_RIGHT_PROTOCOL_VAL "r"
+
 typedef enum {
   North,
   NortEast,
@@ -24,15 +29,22 @@ typedef enum {
 } direction ;
 
 typedef enum {
-  Forward,
-  Backward,
+  forward,
+  backward,
   turnRight,
   turnLeft
 } tank_direction;
 
-// fonction settant duty cycle du PWM :
-// PCA0_writeChannel(PCA0_CHAN0, duty_cycle0 << 8);
+typedef struct tourelle_uart_protocol {
+  uint8_t buffereData[2];
+  tank_direction orderedDirection;
+  uint8_t speed;
+} tourelle_uart_protocol;
 
+const uint8_t Nbdata = 2;
+
+
+tourelle_uart_protocol dataFromRaspberry;
 
 /*
  * Motor Driver working on PWM signal and 2 IN Signals to turn CW, CCW, stop
@@ -68,5 +80,8 @@ void stop(void);
 
 // permet de tester le fonctionnement des moteurs
 void test_moteur(void);
+
+// Permet de traiter le signal reçu du Raspberry
+void analyseCommandFromRaspberry(void);
 
 #endif /* DRIVERS_DIRECTION_H_ */

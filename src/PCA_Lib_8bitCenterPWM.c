@@ -22,6 +22,8 @@
 //   P0.1   - SPI MISO
 //   P0.2   - SPI MOSI
 //   P0.3   - SPI NSS
+//   UART0  - 115200 baud, 8-N-1
+//   Timer1 - UART0 clock source
 //   P0.4   - UART0 TX
 //   P0.5   - UART0 RX
 //   P1.4   - PCA CEX0 / LED
@@ -75,6 +77,7 @@
 // Global Variables
 //-----------------------------------------------------------------------------
 SI_SEGMENT_VARIABLE(buffer[BUFFER_LENGTH], uint8_t, SI_SEG_XDATA);
+
 
 
 /*    SPI functionality ?
@@ -180,7 +183,7 @@ void SiLabs_Startup (void)
 //-----------------------------------------------------------------------------
 void main(void)
 {
-  uint8_t command;
+  // uint8_t command;
 
   enter_DefaultMode_from_RESET();
   UART0_init(UART0_RX_ENABLE, UART0_WIDTH_8, UART0_MULTIPROC_DISABLE);
@@ -202,13 +205,16 @@ void main(void)
     }
 }
 
+
 //-----------------------------------------------------------------------------
 // UART ISR Callbacks
 //-----------------------------------------------------------------------------
-void UART0_receiveCompleteCb ()
+void UART0_receiveCompleteCb()
 {
    uint8_t i;
    unsigned char byte;
+
+
 
    for (i = 0; i<BUFFER_LENGTH; i++)
    {
@@ -217,15 +223,14 @@ void UART0_receiveCompleteCb ()
       /*
        * Place to put Command Analysis
        */
-      // if lower case letter
-      if ((byte >= 'a') && (byte <= 'z'))
-      {
-         byte -= 32;
+      if (i == 0 || i == 1){
+          dataFromRaspberry.buffereData[i] = (uint8_t)byte;
       }
 
       buffer[i] = byte;
    }
    UART0_writeBuffer(buffer, BUFFER_LENGTH);
+   analyseCommandFromRaspberry();
 }
 
 void UART0_transmitCompleteCb ()

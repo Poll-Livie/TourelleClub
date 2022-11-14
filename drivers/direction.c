@@ -161,3 +161,26 @@ void test_moteur(void){
   }
 }
 
+void analyseCommandFromRaspberry(void){
+  switch (dataFromRaspberry.buffereData[0]) {
+    case FORWARD_PROTOCOL_VAL:
+      dataFromRaspberry.orderedDirection = forward;
+      dataFromRaspberry.speed = dataFromRaspberry.buffereData[1];
+      break;
+    case BACKWARD_PROTOCOL_VAL:
+      dataFromRaspberry.orderedDirection = backward;
+      dataFromRaspberry.speed = dataFromRaspberry.buffereData[1];
+      break;
+    case TURN_LEFT_PROTOCOL_VAL:
+      dataFromRaspberry.orderedDirection = turnLeft;
+      dataFromRaspberry.speed = dataFromRaspberry.buffereData[1];
+      break;
+    case TURN_RIGHT_PROTOCOL_VAL:
+      dataFromRaspberry.orderedDirection = turnRight;
+      dataFromRaspberry.speed = dataFromRaspberry.buffereData[1];
+      break;
+    default:
+      break;
+  }
+}
+
