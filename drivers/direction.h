@@ -8,9 +8,19 @@
 #ifndef DRIVERS_DIRECTION_H_
 #define DRIVERS_DIRECTION_H_
 
+
+#include <SI_EFM8BB1_Register_Enums.h>
+// #include "uart_0.h"
+#include "pca_0.h"
+
 // #include "bsp.h"
 // #include "InitDevice.h"
 // #include "pca_0.h"
+
+#define FORWARD_PROTOCOL_LETTER (uint8_t)'f'
+#define BACKWARD_PROTOCOL_LETTER (uint8_t)'b'
+#define TURN_LEFT_PROTOCOL_LETTER (uint8_t)'l'
+#define TURN_RIGHT_PROTOCOL_LETTER (uint8_t)'r'
 
 typedef enum {
   North,
@@ -24,14 +34,20 @@ typedef enum {
 } direction ;
 
 typedef enum {
-  Forward,
-  Backward,
+  forward,
+  backward,
   turnRight,
   turnLeft
 } tank_direction;
 
-// fonction settant duty cycle du PWM :
-// PCA0_writeChannel(PCA0_CHAN0, duty_cycle0 << 8);
+typedef struct tourelle_uart_protocol {
+  uint8_t bufferedData[2];
+  volatile tank_direction orderedDirection;
+  volatile uint8_t speed;
+} tourelle_uart_protocol;
+
+// const uint8_t NbdataProtocol = 2;
+
 
 
 /*
@@ -65,5 +81,11 @@ void turn_left(uint8_t speed);
 
 // permet d'arreter les moteurs
 void stop(void);
+
+// permet de tester le fonctionnement des moteurs
+void test_moteur(void);
+
+// Permet de traiter le signal reçu du Raspberry
+void analyseCommandFromRaspberry(void);
 
 #endif /* DRIVERS_DIRECTION_H_ */

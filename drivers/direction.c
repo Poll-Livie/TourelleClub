@@ -5,8 +5,6 @@
  *      Author: paul_leveque
  */
 
-#include <SI_EFM8BB1_Register_Enums.h>
-#include "pca_0.h"
 #include "direction.h"
 
 // Permet d'aller dans la direction voulue :
@@ -16,6 +14,8 @@ void init_portsIn(void){
   P1MDOUT |= P1MDOUT_B0__PUSH_PULL| P1MDOUT_B1__PUSH_PULL | P1MDOUT_B2__PUSH_PULL
       | P1MDOUT_B3__PUSH_PULL;
   // Set Pins P1.0 to P1.3 as Output for controlling IN 1,2,3,4 ;
+
+  // Initialise UART_0
 }
 
 
@@ -125,3 +125,62 @@ void stop(){
   // + set pins IN(1:4) low or high accordingly
 
 }
+
+void test_moteur(void){
+  uint16_t delay_count;               // Used to implement a delay
+  uint8_t duty_direction0 = 1;        // Module 0: 0 = Decrease; 1 = Increase
+  bool duty_direction1 = 0;           // Module 1: 0 = Increase; 1 = Decrease
+
+  uint8_t duty_cycle0 = 0x80;
+  uint8_t duty_cycle1 = 0xFF;
+  for (delay_count = 30000; delay_count > 0; delay_count--);
+
+  if (duty_direction1 == 1 ){
+      duty_cycle0 = duty_cycle0 + duty_direction0;
+      go_backward(duty_cycle0);
+
+      if (duty_cycle0 == 0x2F) {
+          duty_direction0 = -1;
+          duty_direction1 = 0;
+      }
+      if (duty_cycle0 == 0x00) {
+          duty_direction0 = 1;
+      }
+  }
+  else {
+      duty_cycle0 = duty_cycle0 + duty_direction0;
+      go_forward(duty_cycle0);
+
+      if (duty_cycle0 == 0x2F) {
+          duty_direction0 = -1;
+          duty_direction1 = 1;
+      }
+      if (duty_cycle0 == 0x00) {
+          duty_direction0 = 1;
+      }
+  }
+}
+/*
+void analyseCommandFromRaspberry(void){
+  switch (dataFromRaspberry.bufferedData[0]) {
+    case FORWARD_PROTOCOL_LETTER:
+      dataFromRaspberry.orderedDirection = forward;
+      dataFromRaspberry.speed = dataFromRaspberry.bufferedData[1];
+      break;
+    case BACKWARD_PROTOCOL_LETTER:
+      dataFromRaspberry.orderedDirection = backward;
+      dataFromRaspberry.speed = dataFromRaspberry.bufferedData[1];
+      break;
+    case TURN_LEFT_PROTOCOL_LETTER:
+      dataFromRaspberry.orderedDirection = turnLeft;
+      dataFromRaspberry.speed = dataFromRaspberry.bufferedData[1];
+      break;
+    case TURN_RIGHT_PROTOCOL_LETTER:
+      dataFromRaspberry.orderedDirection = turnRight;
+      dataFromRaspberry.speed = dataFromRaspberry.bufferedData[1];
+      break;
+    default:
+      break;
+  }
+}
+*/

@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.0.0   PCA_LIB_8BITCENTERPWM                                             11/11/2022 16:07:14 PAGE 1   
+C51 COMPILER V9.60.0.0   PCA_LIB_8BITCENTERPWM                                             11/14/2022 20:24:25 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE PCA_LIB_8BITCENTERPWM
@@ -42,294 +42,169 @@ line level    source
   22          //   P0.1   - SPI MISO
   23          //   P0.2   - SPI MOSI
   24          //   P0.3   - SPI NSS
-  25          //   P1.4   - PCA CEX0 / LED
-  26          //
-  27          //-----------------------------------------------------------------------------
-  28          // How To Test: EFM8BB1 LCK
-  29          //-----------------------------------------------------------------------------
-  30          // 1) Connect the EFM8BB1 LCK board to a PC using a micro USB cable.
-  31          // 2) Compile and download code to the EFM8BB1 LCK board.
-  32          //    In Simplicity Studio IDE, select Run -> Debug from the menu bar,
-  33          //    click the Debug button in the quick menu, or press F11.
-  34          // 3) Run the code.
-  35          //    In Simplicity Studio IDE, select Run -> Resume from the menu bar,
-  36          //    click the Resume button in the quick menu, or press F8.
-  37          // 4) Place an oscilloscope probe on P1.4 and P1.5.
-  38          // 5) Verify that the duty cycle of the waveforms vary smoothly between
-  39          //    minimum and maximum values.
-  40          //
-  41          // Target:         EFM8BB1
-  42          // Tool chain:     Generic
-  43          //
-  44          // Release 0.1 (ST)
-  45          //    - Initial Revision
-C51 COMPILER V9.60.0.0   PCA_LIB_8BITCENTERPWM                                             11/11/2022 16:07:14 PAGE 2   
+  25          //   UART0  - 115200 baud, 8-N-1
+  26          //   Timer1 - UART0 clock source
+  27          //   P0.4   - UART0 TX
+  28          //   P0.5   - UART0 RX
+  29          //   P1.4   - PCA CEX0 / LED
+  30          //
+  31          //-----------------------------------------------------------------------------
+  32          // How To Test: EFM8BB1 LCK
+  33          //-----------------------------------------------------------------------------
+  34          // 1) Connect the EFM8BB1 LCK board to a PC using a micro USB cable.
+  35          // 2) Compile and download code to the EFM8BB1 LCK board.
+  36          //    In Simplicity Studio IDE, select Run -> Debug from the menu bar,
+  37          //    click the Debug button in the quick menu, or press F11.
+  38          // 3) Run the code.
+  39          //    In Simplicity Studio IDE, select Run -> Resume from the menu bar,
+  40          //    click the Resume button in the quick menu, or press F8.
+  41          // 4) Place an oscilloscope probe on P1.4 and P1.5.
+  42          // 5) Verify that the duty cycle of the waveforms vary smoothly between
+  43          //    minimum and maximum values.
+  44          //
+  45          // Target:         EFM8BB1
+C51 COMPILER V9.60.0.0   PCA_LIB_8BITCENTERPWM                                             11/14/2022 20:24:25 PAGE 2   
 
-  46          //    - 10 OCT 2014
+  46          // Tool chain:     Generic
   47          //
-  48          
-  49          //-----------------------------------------------------------------------------
-  50          // Includes
-  51          //-----------------------------------------------------------------------------
-  52          #include "bsp.h"
-  53          #include "InitDevice.h"
-  54          
-  55          #include "SPI0_Lib_Slave.h"
-  56          #include "spi_0.h"
-  57          #include <string.h>
+  48          // Release 0.1 (ST)
+  49          //    - Initial Revision
+  50          //    - 10 OCT 2014
+  51          //
+  52          
+  53          //-----------------------------------------------------------------------------
+  54          // Includes
+  55          //-----------------------------------------------------------------------------
+  56          #include "bsp.h"
+  57          #include "InitDevice.h"
   58          
-  59          #include "pca_0.h"
-  60          
-  61          #include "direction.h"
-  62          //-----------------------------------------------------------------------------
-  63          // Prototypes
-  64          //-----------------------------------------------------------------------------
-  65          
-  66          uint8_t TransferByte(uint8_t tx);
-  67          
-  68          //-----------------------------------------------------------------------------
-  69          // Global Variables
-  70          //-----------------------------------------------------------------------------
-  71          
-  72          SI_SEGMENT_VARIABLE(SPI_TxBuf[MAX_BUFFER_SIZE+1],
-  74                              uint8_t,
-  74                              EFM8PDL_SPI0_TX_SEGTYPE);
-  75          SI_SEGMENT_VARIABLE(SPI_RxBuf[MAX_BUFFER_SIZE+1],
-  77                              uint8_t,
-  77                              EFM8PDL_SPI0_RX_SEGTYPE);
-  78          
-  79          uint8_t test_value_rx = 0;
-  80          uint8_t test_array_rx[MAX_BUFFER_SIZE];
-  81          
-  82          //-----------------------------------------------------------------------------
-  83          // Functions
-  84          //-----------------------------------------------------------------------------
-  85          
-  86          // Receive a byte from the master
-  87          uint8_t ReceiveCommand(void)
-  88          {
-  89   1        // Send dummy byte and read command byte
-  90   1        return TransferByte(0xFF);
-  91   1      }
-  92          
-  93          // Send and receive a byte
-  94          uint8_t TransferByte(uint8_t tx)
-  95          {
-  96   1        // Send tx byte
-  97   1        SPI0_writeByte(tx);
-  98   1      
-  99   1        // Return rx byte
- 100   1        while (SPI0_isRxEmpty());
- 101   1        return SPI0_readByte();
- 102   1      }
- 103          
- 104          // Send the response for the specified command (if necessary)
- 105          void SendResponse(uint8_t command)
- 106          {
- 107   1        uint8_t i;
+  59          /*
+  60           * #include "SPI0_Lib_Slave.h"
+  61           * #include "spi_0.h"
+  62           * #include <string.h>
+  63           *
+  64           */
+  65          #include "uart_0.h"
+  66          
+  67          #include "pca_0.h"
+  68          
+  69          #include "direction.h"
+  70          
+  71          //-----------------------------------------------------------------------------
+  72          // Global Constants
+  73          //-----------------------------------------------------------------------------
+  74          #define BUFFER_LENGTH   4
+  75          
+  76          //-----------------------------------------------------------------------------
+  77          // Global Variables
+  78          //-----------------------------------------------------------------------------
+  79          SI_SEGMENT_VARIABLE(buffer[BUFFER_LENGTH], uint8_t, SI_SEG_XDATA);
+  80          
+  81          tourelle_uart_protocol dataFromRaspberry;
+  82          
+  83          //-----------------------------------------------------------------------------
+  84          // SiLabs_Startup() Routine
+  85          // ----------------------------------------------------------------------------
+  86          // This function is called immediately after reset, before the initialization
+  87          // code is run in SILABS_STARTUP.A51 (which runs before main() ). This is a
+  88          // useful place to disable the watchdog timer, which is enable by default
+  89          // and may trigger before main() in some instances.
+  90          //-----------------------------------------------------------------------------
+  91          void SiLabs_Startup (void)
+  92          {
+  93   1        // Disable the watchdog here
+  94   1      }
+  95          
+  96          //-----------------------------------------------------------------------------
+  97          // Main Routine
+  98          //-----------------------------------------------------------------------------
+  99          void main(void)
+ 100          {
+ 101   1        // uint8_t command;
+ 102   1      
+ 103   1        enter_DefaultMode_from_RESET();
+ 104   1        UART0_init(UART0_RX_ENABLE, UART0_WIDTH_8, UART0_MULTIPROC_DISABLE);
+ 105   1      
+ 106   1        init_portsIn();
+ 107   1        IE_EA = 1;
  108   1      
-C51 COMPILER V9.60.0.0   PCA_LIB_8BITCENTERPWM                                             11/11/2022 16:07:14 PAGE 3   
+C51 COMPILER V9.60.0.0   PCA_LIB_8BITCENTERPWM                                             11/14/2022 20:24:25 PAGE 3   
 
- 109   1        switch (command)
- 110   1        {
- 111   2          case SPI_WRITE:
- 112   2            test_value_rx = TransferByte(0xFF);
- 113   2            break;
- 114   2      
- 115   2          case SPI_READ:
- 116   2            TransferByte(test_value_rx);
- 117   2            break;
- 118   2      
- 119   2          case SPI_WRITE_BUFFER:
- 120   2            for (i = 0; i < MAX_BUFFER_SIZE; i++)
- 121   2              {
- 122   3                test_array_rx[i] = TransferByte(0xFF);
- 123   3              }
- 124   2            break;
- 125   2      
- 126   2          case SPI_READ_BUFFER:
- 127   2            for (i = 0; i < MAX_BUFFER_SIZE; i++)
- 128   2              {
- 129   3                TransferByte(test_array_rx[i]);
- 130   3              }
- 131   2            break;
- 132   2      
- 133   2          case SLAVE_LED_ON:
- 134   2            BSP_LED0 = BSP_LED_ON;
- 135   2            break;
- 136   2      
- 137   2          case SLAVE_LED_OFF:
- 138   2            BSP_LED0 = BSP_LED_OFF;
- 139   2            break;
- 140   2        }
- 141   1      }
- 142          
- 143          //-----------------------------------------------------------------------------
- 144          // SiLabs_Startup() Routine
- 145          // ----------------------------------------------------------------------------
- 146          // This function is called immediately after reset, before the initialization
- 147          // code is run in SILABS_STARTUP.A51 (which runs before main() ). This is a
- 148          // useful place to disable the watchdog timer, which is enable by default
- 149          // and may trigger before main() in some instances.
- 150          //-----------------------------------------------------------------------------
- 151          void SiLabs_Startup (void)
- 152          {
- 153   1        // Disable the watchdog here
- 154   1      }
- 155          
- 156          //-----------------------------------------------------------------------------
- 157          // Main Routine
- 158          //-----------------------------------------------------------------------------
- 159          void main(void)
- 160          {
- 161   1        uint16_t delay_count;             // Used to implement a delay
- 162   1        uint8_t duty_direction0 = 1;          // Module 0: 0 = Decrease; 1 = Increase
- 163   1        bool duty_direction1 = 0;          // Module 1: 0 = Increase; 1 = Decrease
- 164   1      
- 165   1        uint8_t duty_cycle0 = 0x80;
- 166   1        uint8_t duty_cycle1 = 0xFF;
- 167   1      
- 168   1        uint8_t command;
- 169   1      
- 170   1      
- 171   1        enter_DefaultMode_from_RESET();
-C51 COMPILER V9.60.0.0   PCA_LIB_8BITCENTERPWM                                             11/11/2022 16:07:14 PAGE 4   
+ 109   1        while (1)
+ 110   1          {
+ 111   2            if ((UART0_rxBytesRemaining() == 0) && (UART0_txBytesRemaining() == 0))
+ 112   2            {
+ 113   3               UART0_readBuffer(buffer, BUFFER_LENGTH);
+ 114   3            }
+ 115   2            if (dataFromRaspberry.bufferedData[0] != 0){
+ 116   3              switch (dataFromRaspberry.bufferedData[0]) {
+ 117   4                case FORWARD_PROTOCOL_LETTER:
+ 118   4                  go_forward(dataFromRaspberry.bufferedData[1]);
+ 119   4                  break;
+ 120   4                case BACKWARD_PROTOCOL_LETTER:
+ 121   4                  go_backward(dataFromRaspberry.bufferedData[1]);
+ 122   4                  break;
+ 123   4                case TURN_LEFT_PROTOCOL_LETTER:
+ 124   4                  turn_left(dataFromRaspberry.bufferedData[1]);
+ 125   4                  break;
+ 126   4                case TURN_RIGHT_PROTOCOL_LETTER:
+ 127   4                  turn_right(dataFromRaspberry.bufferedData[1]);
+ 128   4                  break;
+ 129   4                default:
+ 130   4                  break;
+ 131   4              }
+ 132   3              dataFromRaspberry.bufferedData[0] = 0;
+ 133   3              dataFromRaspberry.bufferedData[1] = 0;
+ 134   3            }
+ 135   2      
+ 136   2          }
+ 137   1      }
+ 138          
+ 139          
+ 140          //-----------------------------------------------------------------------------
+ 141          // UART ISR Callbacks
+ 142          //-----------------------------------------------------------------------------
+ 143          void UART0_receiveCompleteCb()
+ 144          {
+ 145   1         uint8_t i;
+ 146   1         unsigned char byte;
+ 147   1      
+ 148   1      
+ 149   1      
+ 150   1         for (i = 0; i<BUFFER_LENGTH; i++)
+ 151   1         {
+ 152   2            byte = buffer[i];
+ 153   2      
+ 154   2            /*
+ 155   2             * Place to put Command Analysis
+ 156   2             */
+ 157   2            if (i == 0 || i == 1){
+ 158   3                dataFromRaspberry.bufferedData[i] = (uint8_t)byte;
+ 159   3            }
+ 160   2      
+ 161   2            buffer[i] = byte;
+ 162   2         }
+ 163   1         UART0_writeBuffer(buffer, BUFFER_LENGTH);
+ 164   1         // analyseCommandFromRaspberry();
+ 165   1      }
+ 166          
+ 167          void UART0_transmitCompleteCb ()
+ 168          {
+ 169   1      }
+ 170          
+ 171          
+C51 COMPILER V9.60.0.0   PCA_LIB_8BITCENTERPWM                                             11/14/2022 20:24:25 PAGE 4   
 
- 172   1        init_portsIn();
- 173   1      
- 174   1        while (1)
- 175   1          {
- 176   2            // command = ReceiveCommand();
- 177   2      
- 178   2            // Send the command response to the master
- 179   2            // SendResponse(command);
- 180   2      
- 181   2            for (delay_count = 30000; delay_count > 0; delay_count--);
- 182   2      
- 183   2            if (duty_direction1 == 1 ){
- 184   3                duty_cycle0 = duty_cycle0 + duty_direction0;
- 185   3                go_backward(duty_cycle0);
- 186   3      
- 187   3                if (duty_cycle0 == 0x2F) {
- 188   4                    duty_direction0 = -1;
- 189   4                    duty_direction1 = 0;
- 190   4                }
- 191   3                if (duty_cycle0 == 0x00) {
- 192   4                    duty_direction0 = 1;
- 193   4                }
- 194   3            }
- 195   2            else {
- 196   3                duty_cycle0 = duty_cycle0 + duty_direction0;
- 197   3                go_forward(duty_cycle0);
- 198   3      
- 199   3                if (duty_cycle0 == 0x2F) {
- 200   4                    duty_direction0 = -1;
- 201   4                    duty_direction1 = 1;
- 202   4                }
- 203   3                if (duty_cycle0 == 0x00) {
- 204   4                    duty_direction0 = 1;
- 205   4                }
- 206   3      
- 207   3            }
- 208   2      
- 209   2            for (delay_count = 65000; delay_count > 0; delay_count--);
- 210   2      
- 211   2      
- 212   2      
- 213   2          }
- 214   1      }
-*** WARNING C280 IN LINE 168 OF /Users/paul_leveque/Documents/10_Projets/EFM8BB1_PCA_Lib_8bitCenterPWM/src/PCA_Lib_8bitC
-             -enterPWM.c: 'command': unreferenced local variable
- 215          
- 216          
- 217          /*
- 218           * // Wait
- 219              for (delay_count = 30000; delay_count > 0; delay_count--);
- 220          
- 221              // Module 0
- 222              if (duty_direction0 == 1)               // Direction = Increase
- 223              {
- 224                // First, check the ECOM0 bit
- 225                if ((PCA0CPM0 & PCA0CPM0_ECOM__BMASK) == PCA0CPM0_ECOM__DISABLED)
- 226                {
- 227                  PCA0CPM0 |= PCA0CPM0_ECOM__BMASK;   // Set ECOM0 if it is '0'
- 228                }
- 229                else                                  // Increase duty cycle otherwise
- 230                {
- 231                  duty_cycle0--;                      // Increase duty cycle
- 232          
-C51 COMPILER V9.60.0.0   PCA_LIB_8BITCENTERPWM                                             11/11/2022 16:07:14 PAGE 5   
-
- 233                  PCA0_writeChannel(PCA0_CHAN0, duty_cycle0 << 8);
- 234          
- 235                  if (duty_cycle0 == 0x00)
- 236                  {
- 237                    duty_direction0 = 0;              // Change direction for next time
- 238                  }
- 239                }
- 240              }
- 241              else                                    // Direction = Decrease
- 242              {
- 243                if (duty_cycle0 == 0xFF)
- 244                {
- 245                  PCA0CPM0 &= ~PCA0CPM0_ECOM__BMASK;  // Clear ECOM0
- 246                  duty_direction0 = 1;                // Change direction for next time
- 247                }
- 248                else
- 249                {
- 250                  duty_cycle0++;                      // Decrease duty cycle
- 251          
- 252                  PCA0_writeChannel(PCA0_CHAN0, duty_cycle0 << 8);
- 253                }
- 254              }
- 255          
- 256              // Module 1
- 257              if (duty_direction1 == 1)               // Direction = Decrease
- 258              {
- 259                // First, check the ECOM1 bit
- 260                if ((PCA0CPM1 & PCA0CPM1_ECOM__BMASK) == PCA0CPM1_ECOM__DISABLED)
- 261                {
- 262                  PCA0CPM1 |= PCA0CPM1_ECOM__BMASK;   // Set ECOM1 if it is '0'
- 263                }
- 264                else                                  // Increase duty cycle otherwise
- 265                {
- 266                  duty_cycle1++;                      // Decrease duty cycle
- 267          
- 268                  PCA0_writeChannel(PCA0_CHAN1, duty_cycle1 << 8);
- 269          
- 270                  if (duty_cycle1 == 0xFF)
- 271                  {
- 272                    duty_direction1 = 0;              // Change direction for next time
- 273                  }
- 274                }
- 275              }
- 276              else                                    // Direction = Increase
- 277              {
- 278                if (duty_cycle1 == 0x00)
- 279                {
- 280                  PCA0CPM1 &= ~PCA0CPM1_ECOM__BMASK;  // Clear ECOM1
- 281                  duty_direction1 = 1;                // Change direction for next time
- 282                }
- 283                else
- 284                {
- 285                  duty_cycle1--;                      // Increase duty cycle
- 286          
- 287                  PCA0_writeChannel(PCA0_CHAN1, duty_cycle1 << 8);
- 288                }
- 289              }
- 290           */
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    245    ----
+   CODE SIZE        =    158    ----
    CONSTANT SIZE    =   ----    ----
-C51 COMPILER V9.60.0.0   PCA_LIB_8BITCENTERPWM                                             11/11/2022 16:07:14 PAGE 6   
-
-   XDATA SIZE       =   ----    ----
+   XDATA SIZE       =      4    ----
    PDATA SIZE       =   ----    ----
-   DATA SIZE        =     27       7
+   DATA SIZE        =      4       1
    IDATA SIZE       =   ----    ----
-   BIT SIZE         =   ----       1
+   BIT SIZE         =   ----    ----
    EDATA SIZE       =   ----    ----
    HDATA SIZE       =   ----    ----
    XDATA CONST SIZE =   ----    ----
@@ -337,4 +212,4 @@ MODULE INFORMATION:   STATIC OVERLAYABLE
 END OF MODULE INFORMATION.
 
 
-C51 COMPILATION COMPLETE.  1 WARNING(S),  0 ERROR(S)
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
