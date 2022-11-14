@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.0.0   PCA_LIB_8BITCENTERPWM                                             11/14/2022 20:18:34 PAGE 1   
+C51 COMPILER V9.60.0.0   PCA_LIB_8BITCENTERPWM                                             11/14/2022 20:24:25 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE PCA_LIB_8BITCENTERPWM
@@ -63,7 +63,7 @@ line level    source
   43          //    minimum and maximum values.
   44          //
   45          // Target:         EFM8BB1
-C51 COMPILER V9.60.0.0   PCA_LIB_8BITCENTERPWM                                             11/14/2022 20:18:34 PAGE 2   
+C51 COMPILER V9.60.0.0   PCA_LIB_8BITCENTERPWM                                             11/14/2022 20:24:25 PAGE 2   
 
   46          // Tool chain:     Generic
   47          //
@@ -128,7 +128,7 @@ line level    source
  106   1        init_portsIn();
  107   1        IE_EA = 1;
  108   1      
-C51 COMPILER V9.60.0.0   PCA_LIB_8BITCENTERPWM                                             11/14/2022 20:18:34 PAGE 3   
+C51 COMPILER V9.60.0.0   PCA_LIB_8BITCENTERPWM                                             11/14/2022 20:24:25 PAGE 3   
 
  109   1        while (1)
  110   1          {
@@ -139,71 +139,66 @@ line level    source
  115   2            if (dataFromRaspberry.bufferedData[0] != 0){
  116   3              switch (dataFromRaspberry.bufferedData[0]) {
  117   4                case FORWARD_PROTOCOL_LETTER:
- 118   4                  dataFromRaspberry.orderedDirection = forward;
- 119   4                  dataFromRaspberry.speed = dataFromRaspberry.bufferedData[1];
- 120   4                  break;
- 121   4                case BACKWARD_PROTOCOL_LETTER:
- 122   4                  dataFromRaspberry.orderedDirection = backward;
- 123   4                  dataFromRaspberry.speed = dataFromRaspberry.bufferedData[1];
- 124   4                  break;
- 125   4                case TURN_LEFT_PROTOCOL_LETTER:
- 126   4                  dataFromRaspberry.orderedDirection = turnLeft;
- 127   4                  dataFromRaspberry.speed = dataFromRaspberry.bufferedData[1];
+ 118   4                  go_forward(dataFromRaspberry.bufferedData[1]);
+ 119   4                  break;
+ 120   4                case BACKWARD_PROTOCOL_LETTER:
+ 121   4                  go_backward(dataFromRaspberry.bufferedData[1]);
+ 122   4                  break;
+ 123   4                case TURN_LEFT_PROTOCOL_LETTER:
+ 124   4                  turn_left(dataFromRaspberry.bufferedData[1]);
+ 125   4                  break;
+ 126   4                case TURN_RIGHT_PROTOCOL_LETTER:
+ 127   4                  turn_right(dataFromRaspberry.bufferedData[1]);
  128   4                  break;
- 129   4                case TURN_RIGHT_PROTOCOL_LETTER:
- 130   4                  dataFromRaspberry.orderedDirection = turnRight;
- 131   4                  dataFromRaspberry.speed = dataFromRaspberry.bufferedData[1];
- 132   4                  break;
- 133   4                default:
- 134   4                  break;
- 135   4              }
- 136   3              dataFromRaspberry.bufferedData[0] = 0;
- 137   3              dataFromRaspberry.bufferedData[1] = 0;
- 138   3              dataFromRaspberry.speed = 0;
- 139   3            }
- 140   2      
- 141   2          }
- 142   1      }
- 143          
- 144          
- 145          //-----------------------------------------------------------------------------
- 146          // UART ISR Callbacks
- 147          //-----------------------------------------------------------------------------
- 148          void UART0_receiveCompleteCb()
- 149          {
- 150   1         uint8_t i;
- 151   1         unsigned char byte;
- 152   1      
- 153   1      
- 154   1      
- 155   1         for (i = 0; i<BUFFER_LENGTH; i++)
- 156   1         {
- 157   2            byte = buffer[i];
- 158   2      
- 159   2            /*
- 160   2             * Place to put Command Analysis
- 161   2             */
- 162   2            if (i == 0 || i == 1){
- 163   3                dataFromRaspberry.bufferedData[i] = (uint8_t)byte;
- 164   3            }
- 165   2      
- 166   2            buffer[i] = byte;
- 167   2         }
- 168   1         UART0_writeBuffer(buffer, BUFFER_LENGTH);
- 169   1         // analyseCommandFromRaspberry();
- 170   1      }
+ 129   4                default:
+ 130   4                  break;
+ 131   4              }
+ 132   3              dataFromRaspberry.bufferedData[0] = 0;
+ 133   3              dataFromRaspberry.bufferedData[1] = 0;
+ 134   3            }
+ 135   2      
+ 136   2          }
+ 137   1      }
+ 138          
+ 139          
+ 140          //-----------------------------------------------------------------------------
+ 141          // UART ISR Callbacks
+ 142          //-----------------------------------------------------------------------------
+ 143          void UART0_receiveCompleteCb()
+ 144          {
+ 145   1         uint8_t i;
+ 146   1         unsigned char byte;
+ 147   1      
+ 148   1      
+ 149   1      
+ 150   1         for (i = 0; i<BUFFER_LENGTH; i++)
+ 151   1         {
+ 152   2            byte = buffer[i];
+ 153   2      
+ 154   2            /*
+ 155   2             * Place to put Command Analysis
+ 156   2             */
+ 157   2            if (i == 0 || i == 1){
+ 158   3                dataFromRaspberry.bufferedData[i] = (uint8_t)byte;
+ 159   3            }
+ 160   2      
+ 161   2            buffer[i] = byte;
+ 162   2         }
+ 163   1         UART0_writeBuffer(buffer, BUFFER_LENGTH);
+ 164   1         // analyseCommandFromRaspberry();
+ 165   1      }
+ 166          
+ 167          void UART0_transmitCompleteCb ()
+ 168          {
+ 169   1      }
+ 170          
  171          
-C51 COMPILER V9.60.0.0   PCA_LIB_8BITCENTERPWM                                             11/14/2022 20:18:34 PAGE 4   
+C51 COMPILER V9.60.0.0   PCA_LIB_8BITCENTERPWM                                             11/14/2022 20:24:25 PAGE 4   
 
- 172          void UART0_transmitCompleteCb ()
- 173          {
- 174   1      }
- 175          
- 176          
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    155    ----
+   CODE SIZE        =    158    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =      4    ----
    PDATA SIZE       =   ----    ----

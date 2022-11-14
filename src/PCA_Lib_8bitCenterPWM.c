@@ -115,27 +115,22 @@ void main(void)
       if (dataFromRaspberry.bufferedData[0] != 0){
         switch (dataFromRaspberry.bufferedData[0]) {
           case FORWARD_PROTOCOL_LETTER:
-            dataFromRaspberry.orderedDirection = forward;
-            dataFromRaspberry.speed = dataFromRaspberry.bufferedData[1];
+            go_forward(dataFromRaspberry.bufferedData[1]);
             break;
           case BACKWARD_PROTOCOL_LETTER:
-            dataFromRaspberry.orderedDirection = backward;
-            dataFromRaspberry.speed = dataFromRaspberry.bufferedData[1];
+            go_backward(dataFromRaspberry.bufferedData[1]);
             break;
           case TURN_LEFT_PROTOCOL_LETTER:
-            dataFromRaspberry.orderedDirection = turnLeft;
-            dataFromRaspberry.speed = dataFromRaspberry.bufferedData[1];
+            turn_left(dataFromRaspberry.bufferedData[1]);
             break;
           case TURN_RIGHT_PROTOCOL_LETTER:
-            dataFromRaspberry.orderedDirection = turnRight;
-            dataFromRaspberry.speed = dataFromRaspberry.bufferedData[1];
+            turn_right(dataFromRaspberry.bufferedData[1]);
             break;
           default:
             break;
         }
         dataFromRaspberry.bufferedData[0] = 0;
         dataFromRaspberry.bufferedData[1] = 0;
-        dataFromRaspberry.speed = 0;
       }
 
     }
