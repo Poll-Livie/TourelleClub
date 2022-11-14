@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.0.0   DIRECTION                                                         11/14/2022 14:47:17 PAGE 1   
+C51 COMPILER V9.60.0.0   DIRECTION                                                         11/14/2022 20:18:35 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE DIRECTION
@@ -24,17 +24,17 @@ line level    source
    5           *      Author: paul_leveque
    6           */
    7          
-   8          #include <SI_EFM8BB1_Register_Enums.h>
-   9          #include "pca_0.h"
-  10          #include "direction.h"
-  11          
-  12          // Permet d'aller dans la direction voulue :
-  13          // void go_direction(tank_direction maDirection);
-  14          
-  15          void init_portsIn(void){
-  16   1        P1MDOUT |= P1MDOUT_B0__PUSH_PULL| P1MDOUT_B1__PUSH_PULL | P1MDOUT_B2__PUSH_PULL
-  17   1            | P1MDOUT_B3__PUSH_PULL;
-  18   1        // Set Pins P1.0 to P1.3 as Output for controlling IN 1,2,3,4 ;
+   8          #include "direction.h"
+   9          
+  10          // Permet d'aller dans la direction voulue :
+  11          // void go_direction(tank_direction maDirection);
+  12          
+  13          void init_portsIn(void){
+  14   1        P1MDOUT |= P1MDOUT_B0__PUSH_PULL| P1MDOUT_B1__PUSH_PULL | P1MDOUT_B2__PUSH_PULL
+  15   1            | P1MDOUT_B3__PUSH_PULL;
+  16   1        // Set Pins P1.0 to P1.3 as Output for controlling IN 1,2,3,4 ;
+  17   1      
+  18   1        // Initialise UART_0
   19   1      }
   20          
   21          
@@ -63,7 +63,7 @@ line level    source
   44   1        // + set pins IN(1:4) low or high accordingly
   45   1      
   46   1      }
-C51 COMPILER V9.60.0.0   DIRECTION                                                         11/14/2022 14:47:17 PAGE 2   
+C51 COMPILER V9.60.0.0   DIRECTION                                                         11/14/2022 20:18:35 PAGE 2   
 
   47          
   48          // Permet de reculer a une vitesse donnée (valeur a mettre dans le PWM)
@@ -128,7 +128,7 @@ line level    source
  107   2          PCA0_writeChannel(PCA0_CHAN0, speed << 8);
  108   2        }
  109   1      
-C51 COMPILER V9.60.0.0   DIRECTION                                                         11/14/2022 14:47:17 PAGE 3   
+C51 COMPILER V9.60.0.0   DIRECTION                                                         11/14/2022 20:18:35 PAGE 3   
 
  110   1        if ((PCA0CPM1 & PCA0CPM1_ECOM__BMASK) == PCA0CPM1_ECOM__DISABLED)
  111   1        {
@@ -183,39 +183,47 @@ line level    source
  160   3            }
  161   2        }
  162   1      }
- 163          
+ 163          /*
  164          void analyseCommandFromRaspberry(void){
- 165   1        switch (dataFromRaspberry.buffereData[0]) {
- 166   2          case FORWARD_PROTOCOL_VAL:
-*** ERROR C220 IN LINE 166 OF /Users/paul_leveque/Documents/10_Projets/EFM8BB1_PCA_Lib_8bitCenterPWM/drivers/direction.c
-             -: illegal constant expression
- 167   2            dataFromRaspberry.orderedDirection = forward;
- 168   2            dataFromRaspberry.speed = dataFromRaspberry.buffereData[1];
- 169   2            break;
- 170   2          case BACKWARD_PROTOCOL_VAL:
-C51 COMPILER V9.60.0.0   DIRECTION                                                         11/14/2022 14:47:17 PAGE 4   
+ 165            switch (dataFromRaspberry.bufferedData[0]) {
+ 166              case FORWARD_PROTOCOL_LETTER:
+ 167                dataFromRaspberry.orderedDirection = forward;
+ 168                dataFromRaspberry.speed = dataFromRaspberry.bufferedData[1];
+ 169                break;
+ 170              case BACKWARD_PROTOCOL_LETTER:
+ 171                dataFromRaspberry.orderedDirection = backward;
+ 172                dataFromRaspberry.speed = dataFromRaspberry.bufferedData[1];
+C51 COMPILER V9.60.0.0   DIRECTION                                                         11/14/2022 20:18:35 PAGE 4   
 
-*** ERROR C220 IN LINE 170 OF /Users/paul_leveque/Documents/10_Projets/EFM8BB1_PCA_Lib_8bitCenterPWM/drivers/direction.c
-             -: illegal constant expression
- 171   2            dataFromRaspberry.orderedDirection = backward;
- 172   2            dataFromRaspberry.speed = dataFromRaspberry.buffereData[1];
- 173   2            break;
- 174   2          case TURN_LEFT_PROTOCOL_VAL:
-*** ERROR C220 IN LINE 174 OF /Users/paul_leveque/Documents/10_Projets/EFM8BB1_PCA_Lib_8bitCenterPWM/drivers/direction.c
-             -: illegal constant expression
- 175   2            dataFromRaspberry.orderedDirection = turnLeft;
- 176   2            dataFromRaspberry.speed = dataFromRaspberry.buffereData[1];
- 177   2            break;
- 178   2          case TURN_RIGHT_PROTOCOL_VAL:
-*** ERROR C220 IN LINE 178 OF /Users/paul_leveque/Documents/10_Projets/EFM8BB1_PCA_Lib_8bitCenterPWM/drivers/direction.c
-             -: illegal constant expression
- 179   2            dataFromRaspberry.orderedDirection = turnRight;
- 180   2            dataFromRaspberry.speed = dataFromRaspberry.buffereData[1];
- 181   2            break;
- 182   2          default:
- 183   2            break;
- 184   2        }
- 185   1      }
- 186          
+ 173                break;
+ 174              case TURN_LEFT_PROTOCOL_LETTER:
+ 175                dataFromRaspberry.orderedDirection = turnLeft;
+ 176                dataFromRaspberry.speed = dataFromRaspberry.bufferedData[1];
+ 177                break;
+ 178              case TURN_RIGHT_PROTOCOL_LETTER:
+ 179                dataFromRaspberry.orderedDirection = turnRight;
+ 180                dataFromRaspberry.speed = dataFromRaspberry.bufferedData[1];
+ 181                break;
+ 182              default:
+ 183                break;
+ 184            }
+ 185          }
+ 186          */
 
-C51 COMPILATION COMPLETE.  0 WARNING(S),  4 ERROR(S)
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    300    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----       7
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----       1
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

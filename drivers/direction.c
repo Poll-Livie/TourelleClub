@@ -5,8 +5,6 @@
  *      Author: paul_leveque
  */
 
-#include <SI_EFM8BB1_Register_Enums.h>
-#include "pca_0.h"
 #include "direction.h"
 
 // Permet d'aller dans la direction voulue :
@@ -16,6 +14,8 @@ void init_portsIn(void){
   P1MDOUT |= P1MDOUT_B0__PUSH_PULL| P1MDOUT_B1__PUSH_PULL | P1MDOUT_B2__PUSH_PULL
       | P1MDOUT_B3__PUSH_PULL;
   // Set Pins P1.0 to P1.3 as Output for controlling IN 1,2,3,4 ;
+
+  // Initialise UART_0
 }
 
 
@@ -160,27 +160,27 @@ void test_moteur(void){
       }
   }
 }
-
+/*
 void analyseCommandFromRaspberry(void){
-  switch (dataFromRaspberry.buffereData[0]) {
-    case FORWARD_PROTOCOL_VAL:
+  switch (dataFromRaspberry.bufferedData[0]) {
+    case FORWARD_PROTOCOL_LETTER:
       dataFromRaspberry.orderedDirection = forward;
-      dataFromRaspberry.speed = dataFromRaspberry.buffereData[1];
+      dataFromRaspberry.speed = dataFromRaspberry.bufferedData[1];
       break;
-    case BACKWARD_PROTOCOL_VAL:
+    case BACKWARD_PROTOCOL_LETTER:
       dataFromRaspberry.orderedDirection = backward;
-      dataFromRaspberry.speed = dataFromRaspberry.buffereData[1];
+      dataFromRaspberry.speed = dataFromRaspberry.bufferedData[1];
       break;
-    case TURN_LEFT_PROTOCOL_VAL:
+    case TURN_LEFT_PROTOCOL_LETTER:
       dataFromRaspberry.orderedDirection = turnLeft;
-      dataFromRaspberry.speed = dataFromRaspberry.buffereData[1];
+      dataFromRaspberry.speed = dataFromRaspberry.bufferedData[1];
       break;
-    case TURN_RIGHT_PROTOCOL_VAL:
+    case TURN_RIGHT_PROTOCOL_LETTER:
       dataFromRaspberry.orderedDirection = turnRight;
-      dataFromRaspberry.speed = dataFromRaspberry.buffereData[1];
+      dataFromRaspberry.speed = dataFromRaspberry.bufferedData[1];
       break;
     default:
       break;
   }
 }
-
+*/

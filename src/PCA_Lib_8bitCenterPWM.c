@@ -78,92 +78,7 @@
 //-----------------------------------------------------------------------------
 SI_SEGMENT_VARIABLE(buffer[BUFFER_LENGTH], uint8_t, SI_SEG_XDATA);
 
-
-
-/*    SPI functionality ?
-
-//-----------------------------------------------------------------------------
-// Prototypes
-//-----------------------------------------------------------------------------
-
-uint8_t TransferByte(uint8_t tx);
-
-//-----------------------------------------------------------------------------
-// Global Variables
-//-----------------------------------------------------------------------------
-
-SI_SEGMENT_VARIABLE(SPI_TxBuf[MAX_BUFFER_SIZE+1],
-                    uint8_t,
-                    EFM8PDL_SPI0_TX_SEGTYPE);
-SI_SEGMENT_VARIABLE(SPI_RxBuf[MAX_BUFFER_SIZE+1],
-                    uint8_t,
-                    EFM8PDL_SPI0_RX_SEGTYPE);
-
-uint8_t test_value_rx = 0;
-uint8_t test_array_rx[MAX_BUFFER_SIZE];
-
-//-----------------------------------------------------------------------------
-// Functions
-//-----------------------------------------------------------------------------
-
-// Receive a byte from the master
-uint8_t ReceiveCommand(void)
-{
-  // Send dummy byte and read command byte
-  return TransferByte(0xFF);
-}
-
-// Send and receive a byte
-uint8_t TransferByte(uint8_t tx)
-{
-  // Send tx byte
-  SPI0_writeByte(tx);
-
-  // Return rx byte
-  while (SPI0_isRxEmpty());
-  return SPI0_readByte();
-}
-
-// Send the response for the specified command (if necessary)
-void SendResponse(uint8_t command)
-{
-  uint8_t i;
-
-  switch (command)
-  {
-    case SPI_WRITE:
-      test_value_rx = TransferByte(0xFF);
-      break;
-
-    case SPI_READ:
-      TransferByte(test_value_rx);
-      break;
-
-    case SPI_WRITE_BUFFER:
-      for (i = 0; i < MAX_BUFFER_SIZE; i++)
-        {
-          test_array_rx[i] = TransferByte(0xFF);
-        }
-      break;
-
-    case SPI_READ_BUFFER:
-      for (i = 0; i < MAX_BUFFER_SIZE; i++)
-        {
-          TransferByte(test_array_rx[i]);
-        }
-      break;
-
-    case SLAVE_LED_ON:
-      BSP_LED0 = BSP_LED_ON;
-      break;
-
-    case SLAVE_LED_OFF:
-      BSP_LED0 = BSP_LED_OFF;
-      break;
-  }
-}
-*/
-
+tourelle_uart_protocol dataFromRaspberry;
 
 //-----------------------------------------------------------------------------
 // SiLabs_Startup() Routine
@@ -187,19 +102,40 @@ void main(void)
 
   enter_DefaultMode_from_RESET();
   UART0_init(UART0_RX_ENABLE, UART0_WIDTH_8, UART0_MULTIPROC_DISABLE);
-  init_portsIn();
 
+  init_portsIn();
   IE_EA = 1;
 
   while (1)
     {
-      // command = ReceiveCommand();
-
-      // Send the command response to the master
-      // SendResponse(command);
       if ((UART0_rxBytesRemaining() == 0) && (UART0_txBytesRemaining() == 0))
       {
          UART0_readBuffer(buffer, BUFFER_LENGTH);
+      }
+      if (dataFromRaspberry.bufferedData[0] != 0){
+        switch (dataFromRaspberry.bufferedData[0]) {
+          case FORWARD_PROTOCOL_LETTER:
+            dataFromRaspberry.orderedDirection = forward;
+            dataFromRaspberry.speed = dataFromRaspberry.bufferedData[1];
+            break;
+          case BACKWARD_PROTOCOL_LETTER:
+            dataFromRaspberry.orderedDirection = backward;
+            dataFromRaspberry.speed = dataFromRaspberry.bufferedData[1];
+            break;
+          case TURN_LEFT_PROTOCOL_LETTER:
+            dataFromRaspberry.orderedDirection = turnLeft;
+            dataFromRaspberry.speed = dataFromRaspberry.bufferedData[1];
+            break;
+          case TURN_RIGHT_PROTOCOL_LETTER:
+            dataFromRaspberry.orderedDirection = turnRight;
+            dataFromRaspberry.speed = dataFromRaspberry.bufferedData[1];
+            break;
+          default:
+            break;
+        }
+        dataFromRaspberry.bufferedData[0] = 0;
+        dataFromRaspberry.bufferedData[1] = 0;
+        dataFromRaspberry.speed = 0;
       }
 
     }
@@ -224,90 +160,17 @@ void UART0_receiveCompleteCb()
        * Place to put Command Analysis
        */
       if (i == 0 || i == 1){
-          dataFromRaspberry.buffereData[i] = (uint8_t)byte;
+          dataFromRaspberry.bufferedData[i] = (uint8_t)byte;
       }
 
       buffer[i] = byte;
    }
    UART0_writeBuffer(buffer, BUFFER_LENGTH);
-   analyseCommandFromRaspberry();
+   // analyseCommandFromRaspberry();
 }
 
 void UART0_transmitCompleteCb ()
 {
 }
 
-/*
- * // Wait
-    for (delay_count = 30000; delay_count > 0; delay_count--);
 
-    // Module 0
-    if (duty_direction0 == 1)               // Direction = Increase
-    {
-      // First, check the ECOM0 bit
-      if ((PCA0CPM0 & PCA0CPM0_ECOM__BMASK) == PCA0CPM0_ECOM__DISABLED)
-      {
-        PCA0CPM0 |= PCA0CPM0_ECOM__BMASK;   // Set ECOM0 if it is '0'
-      }
-      else                                  // Increase duty cycle otherwise
-      {
-        duty_cycle0--;                      // Increase duty cycle
-
-        PCA0_writeChannel(PCA0_CHAN0, duty_cycle0 << 8);
-
-        if (duty_cycle0 == 0x00)
-        {
-          duty_direction0 = 0;              // Change direction for next time
-        }
-      }
-    }
-    else                                    // Direction = Decrease
-    {
-      if (duty_cycle0 == 0xFF)
-      {
-        PCA0CPM0 &= ~PCA0CPM0_ECOM__BMASK;  // Clear ECOM0
-        duty_direction0 = 1;                // Change direction for next time
-      }
-      else
-      {
-        duty_cycle0++;                      // Decrease duty cycle
-
-        PCA0_writeChannel(PCA0_CHAN0, duty_cycle0 << 8);
-      }
-    }
-
-    // Module 1
-    if (duty_direction1 == 1)               // Direction = Decrease
-    {
-      // First, check the ECOM1 bit
-      if ((PCA0CPM1 & PCA0CPM1_ECOM__BMASK) == PCA0CPM1_ECOM__DISABLED)
-      {
-        PCA0CPM1 |= PCA0CPM1_ECOM__BMASK;   // Set ECOM1 if it is '0'
-      }
-      else                                  // Increase duty cycle otherwise
-      {
-        duty_cycle1++;                      // Decrease duty cycle
-
-        PCA0_writeChannel(PCA0_CHAN1, duty_cycle1 << 8);
-
-        if (duty_cycle1 == 0xFF)
-        {
-          duty_direction1 = 0;              // Change direction for next time
-        }
-      }
-    }
-    else                                    // Direction = Increase
-    {
-      if (duty_cycle1 == 0x00)
-      {
-        PCA0CPM1 &= ~PCA0CPM1_ECOM__BMASK;  // Clear ECOM1
-        duty_direction1 = 1;                // Change direction for next time
-      }
-      else
-      {
-        duty_cycle1--;                      // Increase duty cycle
-
-        PCA0_writeChannel(PCA0_CHAN1, duty_cycle1 << 8);
-      }
-    }
- */

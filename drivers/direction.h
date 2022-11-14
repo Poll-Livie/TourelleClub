@@ -8,14 +8,19 @@
 #ifndef DRIVERS_DIRECTION_H_
 #define DRIVERS_DIRECTION_H_
 
+
+#include <SI_EFM8BB1_Register_Enums.h>
+// #include "uart_0.h"
+#include "pca_0.h"
+
 // #include "bsp.h"
 // #include "InitDevice.h"
 // #include "pca_0.h"
 
-#define FORWARD_PROTOCOL_VAL "f"
-#define BACKWARD_PROTOCOL_VAL "b"
-#define TURN_LEFT_PROTOCOL_VAL "l"
-#define TURN_RIGHT_PROTOCOL_VAL "r"
+#define FORWARD_PROTOCOL_LETTER (uint8_t)'f'
+#define BACKWARD_PROTOCOL_LETTER (uint8_t)'b'
+#define TURN_LEFT_PROTOCOL_LETTER (uint8_t)'l'
+#define TURN_RIGHT_PROTOCOL_LETTER (uint8_t)'r'
 
 typedef enum {
   North,
@@ -36,15 +41,14 @@ typedef enum {
 } tank_direction;
 
 typedef struct tourelle_uart_protocol {
-  uint8_t buffereData[2];
-  tank_direction orderedDirection;
-  uint8_t speed;
+  uint8_t bufferedData[2];
+  volatile tank_direction orderedDirection;
+  volatile uint8_t speed;
 } tourelle_uart_protocol;
 
-const uint8_t Nbdata = 2;
+// const uint8_t NbdataProtocol = 2;
 
 
-tourelle_uart_protocol dataFromRaspberry;
 
 /*
  * Motor Driver working on PWM signal and 2 IN Signals to turn CW, CCW, stop

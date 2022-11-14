@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.0.0   INITDEVICE                                                        11/14/2022 14:40:44 PAGE 1   
+C51 COMPILER V9.60.0.0   INITDEVICE                                                        11/14/2022 19:42:30 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE INITDEVICE
@@ -63,7 +63,7 @@ line level    source
   44          //================================================================================
   45          extern void
   46          WDT_0_enter_DefaultMode_from_RESET (void)
-C51 COMPILER V9.60.0.0   INITDEVICE                                                        11/14/2022 14:40:44 PAGE 2   
+C51 COMPILER V9.60.0.0   INITDEVICE                                                        11/14/2022 19:42:30 PAGE 2   
 
   47          {
   48   1        // $[Watchdog Timer Init Variable Declarations]
@@ -128,7 +128,7 @@ line level    source
  107   1      
  108   1        // $[P0SKIP - Port 0 Skip]
  109   1        /***********************************************************************
-C51 COMPILER V9.60.0.0   INITDEVICE                                                        11/14/2022 14:40:44 PAGE 3   
+C51 COMPILER V9.60.0.0   INITDEVICE                                                        11/14/2022 19:42:30 PAGE 3   
 
  110   1         - P0.0 pin is skipped by the crossbar
  111   1         - P0.1 pin is skipped by the crossbar
@@ -193,7 +193,7 @@ line level    source
  170   1         ***********************************************************************/
  171   1        P1SKIP = P1SKIP_B0__SKIPPED | P1SKIP_B1__SKIPPED | P1SKIP_B2__SKIPPED
  172   1            | P1SKIP_B3__SKIPPED | P1SKIP_B4__NOT_SKIPPED | P1SKIP_B5__NOT_SKIPPED
-C51 COMPILER V9.60.0.0   INITDEVICE                                                        11/14/2022 14:40:44 PAGE 4   
+C51 COMPILER V9.60.0.0   INITDEVICE                                                        11/14/2022 19:42:30 PAGE 4   
 
  173   1            | P1SKIP_B6__NOT_SKIPPED | P1SKIP_B7__NOT_SKIPPED;
  174   1        // [P1SKIP - Port 1 Skip]$
@@ -258,7 +258,7 @@ line level    source
  233          //================================================================================
  234          extern void
  235          CLOCK_0_enter_DefaultMode_from_RESET (void)
-C51 COMPILER V9.60.0.0   INITDEVICE                                                        11/14/2022 14:40:44 PAGE 5   
+C51 COMPILER V9.60.0.0   INITDEVICE                                                        11/14/2022 19:42:30 PAGE 5   
 
  236          {
  237   1        // $[CLKSEL - Clock Select]
@@ -323,7 +323,7 @@ line level    source
  296   1      
  297   1      }
  298          
-C51 COMPILER V9.60.0.0   INITDEVICE                                                        11/14/2022 14:40:44 PAGE 6   
+C51 COMPILER V9.60.0.0   INITDEVICE                                                        11/14/2022 19:42:30 PAGE 6   
 
  299          //================================================================================
  300          // PCACH_0_enter_DefaultMode_from_RESET
@@ -388,7 +388,7 @@ line level    source
  359   1        // $[PCA0CPM1 - PCA Channel 1 Capture/Compare Mode]
  360   1        /***********************************************************************
  361   1         - Disable negative edge capture
-C51 COMPILER V9.60.0.0   INITDEVICE                                                        11/14/2022 14:40:44 PAGE 7   
+C51 COMPILER V9.60.0.0   INITDEVICE                                                        11/14/2022 19:42:30 PAGE 7   
 
  362   1         - Disable CCF1 interrupts
  363   1         - Disable match function
@@ -453,7 +453,7 @@ line level    source
  422          extern void
  423          INTERRUPT_0_enter_DefaultMode_from_RESET (void)
  424          {
-C51 COMPILER V9.60.0.0   INITDEVICE                                                        11/14/2022 14:40:44 PAGE 8   
+C51 COMPILER V9.60.0.0   INITDEVICE                                                        11/14/2022 19:42:30 PAGE 8   
 
  425   1      
  426   1        // $[EIE1 - Extended Interrupt Enable 1]
@@ -518,7 +518,7 @@ line level    source
  485   1        //Restore Timer Configuration
  486   1        TCON |= (TCON_save & TCON_TR0__BMASK) | (TCON_save & TCON_TR1__BMASK);
  487   1      
-C51 COMPILER V9.60.0.0   INITDEVICE                                                        11/14/2022 14:40:44 PAGE 9   
+C51 COMPILER V9.60.0.0   INITDEVICE                                                        11/14/2022 19:42:30 PAGE 9   
 
  488   1        // [Timer Restoration]$
  489   1      
@@ -583,7 +583,7 @@ MODULE INFORMATION:   STATIC OVERLAYABLE
    CODE SIZE        =    218    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
-C51 COMPILER V9.60.0.0   INITDEVICE                                                        11/14/2022 14:40:44 PAGE 10  
+C51 COMPILER V9.60.0.0   INITDEVICE                                                        11/14/2022 19:42:30 PAGE 10  
 
    PDATA SIZE       =   ----    ----
    DATA SIZE        =   ----       4
