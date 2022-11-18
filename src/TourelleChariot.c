@@ -99,7 +99,8 @@ void SiLabs_Startup (void)
 void main(void)
 {
   // uint8_t command;
-
+  volatile uint16_t delay_counter = 0;
+  volatile uint16_t delay_counter2 = 0;
   enter_DefaultMode_from_RESET();
   UART0_init(UART0_RX_ENABLE, UART0_WIDTH_8, UART0_MULTIPROC_DISABLE);
 
@@ -112,25 +113,35 @@ void main(void)
       {
          UART0_readBuffer(buffer, BUFFER_LENGTH);
       }
+
+      // Switch
       if (dataFromRaspberry.bufferedData[0] != 0){
         switch (dataFromRaspberry.bufferedData[0]) {
           case FORWARD_PROTOCOL_LETTER:
             go_forward(dataFromRaspberry.bufferedData[1]);
+            for (delay_counter2 = 0; delay_counter2 < 100; ++delay_counter2)
+                for (delay_counter = 0; delay_counter < 20000; ++delay_counter);
             break;
           case BACKWARD_PROTOCOL_LETTER:
             go_backward(dataFromRaspberry.bufferedData[1]);
+            for (delay_counter = 0; delay_counter < 20000; ++delay_counter);
             break;
           case TURN_LEFT_PROTOCOL_LETTER:
             turn_left(dataFromRaspberry.bufferedData[1]);
+            for (delay_counter = 0; delay_counter < 20000; ++delay_counter);
             break;
           case TURN_RIGHT_PROTOCOL_LETTER:
             turn_right(dataFromRaspberry.bufferedData[1]);
+            for (delay_counter = 0; delay_counter < 20000; ++delay_counter);
             break;
           default:
             break;
         }
         dataFromRaspberry.bufferedData[0] = 0;
         dataFromRaspberry.bufferedData[1] = 0;
+      }
+      else {
+          stop();
       }
 
     }
@@ -154,6 +165,7 @@ void UART0_receiveCompleteCb()
       /*
        * Place to put Command Analysis
        */
+      // Take only first and second value received
       if (i == 0 || i == 1){
           dataFromRaspberry.bufferedData[i] = (uint8_t)byte;
       }

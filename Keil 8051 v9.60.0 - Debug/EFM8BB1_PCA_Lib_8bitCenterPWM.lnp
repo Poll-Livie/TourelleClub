@@ -1,9 +1,8 @@
 "./src/InitDevice.OBJ",
-"./src/PCA_Lib_8bitCenterPWM.OBJ",
 "./src/SILABS_STARTUP.OBJ",
-"./src/Interrupts.OBJ",
 "./drivers/direction.OBJ",
 "./lib/efm8bb1/peripheralDrivers/src/pca_0.OBJ",
 "./lib/efm8_assert/assert.OBJ",
-"./lib/efm8bb1/peripheralDrivers/src/uart_0.OBJ"
+"./lib/efm8bb1/peripheralDrivers/src/uart_0.OBJ",
+"./src/TourelleChariot.OBJ"
 TO "EFM8BB1_PCA_LIB_8BITCENTERPWM.OMF.CRBUILD" REMOVEUNUSED PRINT(.\EFM8BB1_PCA_Lib_8bitCenterPWM.m51) PAGEWIDTH (120) PAGELENGTH (65) CLASSES( ECODE(C:0x0 - C:0x1ffe), HCONST(C:0x0 - C:0x1ffe), XDATA(X:0x0 - X:0xff), HDATA(X:0x0 - X:0xff))

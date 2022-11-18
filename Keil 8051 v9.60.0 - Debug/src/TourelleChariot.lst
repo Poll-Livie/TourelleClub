@@ -1,20 +1,19 @@
-C51 COMPILER V9.60.0.0   PCA_LIB_8BITCENTERPWM                                             11/17/2022 13:46:12 PAGE 1   
+C51 COMPILER V9.60.0.0   TOURELLECHARIOT                                                   11/17/2022 14:51:55 PAGE 1   
 
 
-C51 COMPILER V9.60.0.0, COMPILATION OF MODULE PCA_LIB_8BITCENTERPWM
-OBJECT MODULE PLACED IN .\src/PCA_Lib_8bitCenterPWM.OBJ
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE TOURELLECHARIOT
+OBJECT MODULE PLACED IN .\src/TourelleChariot.OBJ
 COMPILER INVOKED BY: Z:\Applications\Simplicity Studio.app\Contents\Eclipse\developer\toolchains\keil_8051\9.60\BIN\C51.
-                    -exe /Users/paul_leveque/Documents/10_Projets/EFM8BB1_PCA_Lib_8bitCenterPWM/src/PCA_Lib_8bitCenterPWM.c OMF2 SMALL DEBUG 
-                    -OBJECTEXTEND ROM(LARGE) WARNINGLEVEL(2) FLOATFUZZY(3) OPTIMIZE(8,SPEED) DEFINE(DEBUG=1) INTVECTOR(0X0000) INTPROMOTE INC
-                    -DIR(/Users/paul_leveque/Documents/10_Projets/EFM8BB1_PCA_Lib_8bitCenterPWM/inc;/Users/paul_leveque/Documents/10_Projets/
-                    -EFM8BB1_PCA_Lib_8bitCenterPWM/inc/config;/Users/paul_leveque/Documents/10_Projets/EFM8BB1_PCA_Lib_8bitCenterPWM/drivers;
-                    -/Applications/Simplicity Studio.app/Contents/Eclipse/developer/sdks/8051/v4.2.4//Lib/efm8_assert;/Applications/Simplicit
-                    -y Studio.app/Contents/Eclipse/developer/sdks/8051/v4.2.4//Device/shared/si8051Base;/Applications/Simplicity Studio.app/C
-                    -ontents/Eclipse/developer/sdks/8051/v4.2.4//Device/EFM8BB1/inc;/Applications/Simplicity Studio.app/Contents/Eclipse/deve
-                    -loper/sdks/8051/v4.2.4//kits/common/bsp;/Applications/Simplicity Studio.app/Contents/Eclipse/developer/sdks/8051/v4.2.4/
-                    -/kits/EFM8BB1_LCK/config;/Applications/Simplicity Studio.app/Contents/Eclipse/developer/sdks/8051/v4.2.4//Device/EFM8BB1
-                    -/peripheral_driver/inc) PRINT(.\src/PCA_Lib_8bitCenterPWM.lst) COND PAGEWIDTH(120) PAGELENGTH(65) OBJECT(.\src/PCA_Lib_8
-                    -bitCenterPWM.OBJ)
+                    -exe /Users/paul_leveque/Documents/10_Projets/EFM8BB1_PCA_Lib_8bitCenterPWM/src/TourelleChariot.c OMF2 SMALL DEBUG OBJECT
+                    -EXTEND ROM(LARGE) WARNINGLEVEL(2) FLOATFUZZY(3) OPTIMIZE(8,SPEED) DEFINE(DEBUG=1) INTVECTOR(0X0000) INTPROMOTE INCDIR(/U
+                    -sers/paul_leveque/Documents/10_Projets/EFM8BB1_PCA_Lib_8bitCenterPWM/inc;/Users/paul_leveque/Documents/10_Projets/EFM8BB
+                    -1_PCA_Lib_8bitCenterPWM/inc/config;/Users/paul_leveque/Documents/10_Projets/EFM8BB1_PCA_Lib_8bitCenterPWM/drivers;/Appli
+                    -cations/Simplicity Studio.app/Contents/Eclipse/developer/sdks/8051/v4.2.4//Lib/efm8_assert;/Applications/Simplicity Stud
+                    -io.app/Contents/Eclipse/developer/sdks/8051/v4.2.4//Device/shared/si8051Base;/Applications/Simplicity Studio.app/Content
+                    -s/Eclipse/developer/sdks/8051/v4.2.4//Device/EFM8BB1/inc;/Applications/Simplicity Studio.app/Contents/Eclipse/developer/
+                    -sdks/8051/v4.2.4//kits/common/bsp;/Applications/Simplicity Studio.app/Contents/Eclipse/developer/sdks/8051/v4.2.4//kits/
+                    -EFM8BB1_LCK/config;/Applications/Simplicity Studio.app/Contents/Eclipse/developer/sdks/8051/v4.2.4//Device/EFM8BB1/perip
+                    -heral_driver/inc) PRINT(.\src/TourelleChariot.lst) COND PAGEWIDTH(120) PAGELENGTH(65) OBJECT(.\src/TourelleChariot.OBJ)
 
 line level    source
 
@@ -63,9 +62,9 @@ line level    source
   43          //    minimum and maximum values.
   44          //
   45          // Target:         EFM8BB1
-C51 COMPILER V9.60.0.0   PCA_LIB_8BITCENTERPWM                                             11/17/2022 13:46:12 PAGE 2   
-
   46          // Tool chain:     Generic
+C51 COMPILER V9.60.0.0   TOURELLECHARIOT                                                   11/17/2022 14:51:55 PAGE 2   
+
   47          //
   48          // Release 0.1 (ST)
   49          //    - Initial Revision
@@ -121,93 +120,96 @@ line level    source
   99          void main(void)
  100          {
  101   1        // uint8_t command;
- 102   1        uint16_t delay_counter = 0;
- 103   1        uint16_t delay_counter2 = 0;
+ 102   1        volatile uint16_t delay_counter = 0;
+ 103   1        volatile uint16_t delay_counter2 = 0;
  104   1        enter_DefaultMode_from_RESET();
  105   1        UART0_init(UART0_RX_ENABLE, UART0_WIDTH_8, UART0_MULTIPROC_DISABLE);
  106   1      
  107   1        init_portsIn();
  108   1        IE_EA = 1;
-C51 COMPILER V9.60.0.0   PCA_LIB_8BITCENTERPWM                                             11/17/2022 13:46:12 PAGE 3   
-
  109   1      
+C51 COMPILER V9.60.0.0   TOURELLECHARIOT                                                   11/17/2022 14:51:55 PAGE 3   
+
  110   1        while (1)
  111   1          {
  112   2            if ((UART0_rxBytesRemaining() == 0) && (UART0_txBytesRemaining() == 0))
  113   2            {
  114   3               UART0_readBuffer(buffer, BUFFER_LENGTH);
  115   3            }
- 116   2            if (dataFromRaspberry.bufferedData[0] != 0){
- 117   3              switch (dataFromRaspberry.bufferedData[0]) {
- 118   4                case FORWARD_PROTOCOL_LETTER:
- 119   4                  go_forward(dataFromRaspberry.bufferedData[1]);
- 120   4                  for (delay_counter2 = 0; delay_counter2 < 100; ++delay_counter2)
- 121   4                      for (delay_counter = 0; delay_counter < 20000; ++delay_counter);
- 122   4                  break;
- 123   4                case BACKWARD_PROTOCOL_LETTER:
- 124   4                  go_backward(dataFromRaspberry.bufferedData[1]);
- 125   4                  for (delay_counter = 0; delay_counter < 20000; ++delay_counter);
- 126   4                  break;
- 127   4                case TURN_LEFT_PROTOCOL_LETTER:
- 128   4                  turn_left(dataFromRaspberry.bufferedData[1]);
- 129   4                  for (delay_counter = 0; delay_counter < 20000; ++delay_counter);
- 130   4                  break;
- 131   4                case TURN_RIGHT_PROTOCOL_LETTER:
- 132   4                  turn_right(dataFromRaspberry.bufferedData[1]);
- 133   4                  for (delay_counter = 0; delay_counter < 20000; ++delay_counter);
- 134   4                  break;
- 135   4                default:
+ 116   2      
+ 117   2            // Switch
+ 118   2            if (dataFromRaspberry.bufferedData[0] != 0){
+ 119   3              switch (dataFromRaspberry.bufferedData[0]) {
+ 120   4                case FORWARD_PROTOCOL_LETTER:
+ 121   4                  go_forward(dataFromRaspberry.bufferedData[1]);
+ 122   4                  for (delay_counter2 = 0; delay_counter2 < 100; ++delay_counter2)
+ 123   4                      for (delay_counter = 0; delay_counter < 20000; ++delay_counter);
+ 124   4                  break;
+ 125   4                case BACKWARD_PROTOCOL_LETTER:
+ 126   4                  go_backward(dataFromRaspberry.bufferedData[1]);
+ 127   4                  for (delay_counter = 0; delay_counter < 20000; ++delay_counter);
+ 128   4                  break;
+ 129   4                case TURN_LEFT_PROTOCOL_LETTER:
+ 130   4                  turn_left(dataFromRaspberry.bufferedData[1]);
+ 131   4                  for (delay_counter = 0; delay_counter < 20000; ++delay_counter);
+ 132   4                  break;
+ 133   4                case TURN_RIGHT_PROTOCOL_LETTER:
+ 134   4                  turn_right(dataFromRaspberry.bufferedData[1]);
+ 135   4                  for (delay_counter = 0; delay_counter < 20000; ++delay_counter);
  136   4                  break;
- 137   4              }
- 138   3              dataFromRaspberry.bufferedData[0] = 0;
- 139   3              dataFromRaspberry.bufferedData[1] = 0;
- 140   3            }
- 141   2            else {
- 142   3                stop();
- 143   3            }
- 144   2      
- 145   2          }
- 146   1      }
- 147          
- 148          
- 149          //-----------------------------------------------------------------------------
- 150          // UART ISR Callbacks
+ 137   4                default:
+ 138   4                  break;
+ 139   4              }
+ 140   3              dataFromRaspberry.bufferedData[0] = 0;
+ 141   3              dataFromRaspberry.bufferedData[1] = 0;
+ 142   3            }
+ 143   2            else {
+ 144   3                stop();
+ 145   3            }
+ 146   2      
+ 147   2          }
+ 148   1      }
+ 149          
+ 150          
  151          //-----------------------------------------------------------------------------
- 152          void UART0_receiveCompleteCb()
- 153          {
- 154   1         uint8_t i;
- 155   1         unsigned char byte;
- 156   1      
- 157   1      
+ 152          // UART ISR Callbacks
+ 153          //-----------------------------------------------------------------------------
+ 154          void UART0_receiveCompleteCb()
+ 155          {
+ 156   1         uint8_t i;
+ 157   1         unsigned char byte;
  158   1      
- 159   1         for (i = 0; i<BUFFER_LENGTH; i++)
- 160   1         {
- 161   2            byte = buffer[i];
- 162   2      
- 163   2            /*
- 164   2             * Place to put Command Analysis
- 165   2             */
- 166   2            if (i == 0 || i == 1){
- 167   3                dataFromRaspberry.bufferedData[i] = (uint8_t)byte;
- 168   3            }
- 169   2      
- 170   2            buffer[i] = byte;
- 171   2         }
-C51 COMPILER V9.60.0.0   PCA_LIB_8BITCENTERPWM                                             11/17/2022 13:46:12 PAGE 4   
+ 159   1      
+ 160   1      
+ 161   1         for (i = 0; i<BUFFER_LENGTH; i++)
+ 162   1         {
+ 163   2            byte = buffer[i];
+ 164   2      
+ 165   2            /*
+ 166   2             * Place to put Command Analysis
+ 167   2             */
+ 168   2            // Take only first and second value received
+ 169   2            if (i == 0 || i == 1){
+ 170   3                dataFromRaspberry.bufferedData[i] = (uint8_t)byte;
+ 171   3            }
+ 172   2      
+C51 COMPILER V9.60.0.0   TOURELLECHARIOT                                                   11/17/2022 14:51:55 PAGE 4   
 
- 172   1         UART0_writeBuffer(buffer, BUFFER_LENGTH);
- 173   1         // analyseCommandFromRaspberry();
- 174   1      }
- 175          
- 176          void UART0_transmitCompleteCb ()
- 177          {
- 178   1      }
- 179          
- 180          
+ 173   2            buffer[i] = byte;
+ 174   2         }
+ 175   1         UART0_writeBuffer(buffer, BUFFER_LENGTH);
+ 176   1         // analyseCommandFromRaspberry();
+ 177   1      }
+ 178          
+ 179          void UART0_transmitCompleteCb ()
+ 180          {
+ 181   1      }
+ 182          
+ 183          
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    283    ----
+   CODE SIZE        =    293    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =      4    ----
    PDATA SIZE       =   ----    ----

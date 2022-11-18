@@ -11,8 +11,8 @@
 // void go_direction(tank_direction maDirection);
 
 void init_portsIn(void){
-  P1MDOUT |= P1MDOUT_B0__PUSH_PULL| P1MDOUT_B1__PUSH_PULL | P1MDOUT_B2__PUSH_PULL
-      | P1MDOUT_B3__PUSH_PULL;
+  P1MDOUT |= P1MDOUT_B0__PUSH_PULL| P1MDOUT_B1__PUSH_PULL | P1MDOUT_B2__PUSH_PULL;
+     // | P1MDOUT_B3__PUSH_PULL;
   // Set Pins P1.0 to P1.3 as Output for controlling IN 1,2,3,4 ;
 
   // Initialise UART_0
@@ -22,24 +22,22 @@ void init_portsIn(void){
 // Permet d'avancer a une vitesse donnée (valeur a mettre dans le PWM)
 void go_forward(uint8_t speed){
   // TODO Ajouter le changement de valeur des ports
-  P1 |=   0x0A;   // 1010
-  P1 &=  ~0x05;   // 0101
+  // P1 |=   0x0A;   // 1010
+  // P1 &=  ~0x05;   // 0101
 
   if ((PCA0CPM0 & PCA0CPM0_ECOM__BMASK) == PCA0CPM0_ECOM__DISABLED)
   {
     PCA0CPM0 |= PCA0CPM0_ECOM__BMASK;   // Set ECOM0 if it is '0'
-  }
-  else {
-    PCA0_writeChannel(PCA0_CHAN0, speed << 8);
   }
 
   if ((PCA0CPM1 & PCA0CPM1_ECOM__BMASK) == PCA0CPM1_ECOM__DISABLED)
   {
     PCA0CPM1 |= PCA0CPM1_ECOM__BMASK;   // Set ECOM1 if it is '0'
   }
-  else {
-    PCA0_writeChannel(PCA0_CHAN1, speed << 8);
-  }
+
+  PCA0_writeChannel(PCA0_CHAN0, speed << 8);
+
+  PCA0_writeChannel(PCA0_CHAN1, speed << 8);
 
   // + set pins IN(1:4) low or high accordingly
 
